@@ -1,0 +1,25 @@
+spring:
+  web:
+    resources:
+      static-locations: classpath:/static/
+      add-mappings: true
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/my_shop?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: 1234
+    name: my_shop
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
