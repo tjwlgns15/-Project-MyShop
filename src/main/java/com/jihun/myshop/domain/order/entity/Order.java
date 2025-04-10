@@ -38,23 +38,23 @@ public class Order extends BaseTimeEntity {
     @JoinColumn(name = "shipping_address_id")
     private Address shippingAddress;
 
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "billing_address_id")
-//    private Address billingAddress;
+/*    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "billing_address_id")
+    private Address billingAddress;
 
-//    private BigDecimal totalAmount;
-//    private BigDecimal shippingFee;
-//    private BigDecimal taxAmount;
-//    private BigDecimal discountAmount;
-//    private BigDecimal finalAmount;
-//
-//    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
-//    private Payment payment;
-//
-//    private LocalDateTime orderedAt;
-//    private LocalDateTime paidAt;
-//    private LocalDateTime shippedAt;
-//    private LocalDateTime deliveredAt;
-//    private String trackingNumber;
-//    private String cancelReason;
+    private BigDecimal totalAmount;
+    private BigDecimal shippingFee;
+    private BigDecimal taxAmount;
+    private BigDecimal discountAmount;
+    private BigDecimal finalAmount;
+
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    private Payment payment;
+
+    private LocalDateTime orderedAt;
+    private LocalDateTime paidAt;
+    private LocalDateTime shippedAt;
+    private LocalDateTime deliveredAt;
+    private String trackingNumber;
+    private String cancelReason;*/
 }

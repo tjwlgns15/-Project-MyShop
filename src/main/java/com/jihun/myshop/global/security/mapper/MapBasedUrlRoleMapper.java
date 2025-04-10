@@ -24,6 +24,7 @@ public class MapBasedUrlRoleMapper implements UrlRoleMapper {
 
         // rest api ( 웹 )
         urlRoleMappings.put("/auth/**", "permitAll");
+        urlRoleMappings.put("/api/auth/logout", "authenticated");
         urlRoleMappings.put("/api/auth/**", "permitAll");
 
         urlRoleMappings.put("/user/**", "ROLE_USER");
@@ -37,7 +38,6 @@ public class MapBasedUrlRoleMapper implements UrlRoleMapper {
 
         urlRoleMappings.put("/admin/**", "ROLE_ADMIN");
         urlRoleMappings.put("/api/admin/**", "ROLE_ADMIN");
-
 
         return new HashMap<>(urlRoleMappings);
     }

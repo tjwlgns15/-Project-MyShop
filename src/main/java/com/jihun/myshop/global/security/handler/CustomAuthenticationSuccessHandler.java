@@ -3,6 +3,7 @@ package com.jihun.myshop.global.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jihun.myshop.global.common.ApiResponseEntity;
 import com.jihun.myshop.domain.user.entity.dto.UserResponse;
+import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -27,12 +28,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     private final ObjectMapper objectMapper;
 
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 
         // 권한 정보 확인
-        UserResponse user = (UserResponse) authentication.getPrincipal();
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+        UserResponse user = principal.getUserResponse();
         boolean isAdmin = user.isAdmin();
         Map<String, String> data = new HashMap<>();
 
@@ -46,6 +47,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
 
         ApiResponseEntity<Map<String, String>> apiResponse = ApiResponseEntity.success(data);
         objectMapper.writeValue(response.getWriter(), apiResponse);

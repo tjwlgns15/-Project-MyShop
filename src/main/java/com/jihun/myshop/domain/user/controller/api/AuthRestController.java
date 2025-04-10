@@ -1,4 +1,4 @@
-package com.jihun.myshop.domain.user.controller;
+package com.jihun.myshop.domain.user.controller.api;
 
 import com.jihun.myshop.global.common.ApiResponseEntity;
 import com.jihun.myshop.domain.user.entity.dto.UserResponse;

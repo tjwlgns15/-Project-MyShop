@@ -12,3 +12,7 @@
     - 다양한 기능을 위해 Entity 추가 작성
 
     - 추가적인 정리 필요, csrf: disable
+
+## product
+    - product, category CRUD 완료
+    - product 페이징, 페치조인 적용

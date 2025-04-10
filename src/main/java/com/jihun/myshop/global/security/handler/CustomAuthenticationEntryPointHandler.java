@@ -20,6 +20,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class CustomAuthenticationEntryPointHandler implements AuthenticationEntryPoint {
+
     private final ObjectMapper objectMapper;
 
     @Override
@@ -28,8 +29,9 @@ public class CustomAuthenticationEntryPointHandler implements AuthenticationEntr
         // AJAX 요청인지 확인
         if (WebUtil.isAjax(request)) {
             // AJAX 요청인 경우 JSON 응답 반환
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding("UTF-8");
 
             Map<String, Object> data = new HashMap<>();
             data.put("redirectUrl", "/auth/login");

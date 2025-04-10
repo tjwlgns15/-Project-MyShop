@@ -44,9 +44,8 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException {
 
-        if (!HttpMethod.POST.name().equals(request.getMethod())
-//                || !WebUtil.isAjax(request)
-        ) { throw new IllegalArgumentException("Authentication method not supported");
+        if (!HttpMethod.POST.name().equals(request.getMethod()) /*|| !WebUtil.isAjax(request)*/) {
+            throw new IllegalArgumentException("Authentication method not supported");
         }
 
         UserResponse userResponse = objectMapper.readValue(request.getReader(), UserResponse.class);

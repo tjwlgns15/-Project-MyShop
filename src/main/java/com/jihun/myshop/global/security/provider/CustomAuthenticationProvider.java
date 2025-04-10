@@ -26,10 +26,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
 
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-            throw new BadCredentialsException("Invalid password");
+            throw new BadCredentialsException("비밀번호 인증에 실패하였습니다.");
         }
 
-        return new UsernamePasswordAuthenticationToken(userDetails.getUserResponse(), null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
     @Override

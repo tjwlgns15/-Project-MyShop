@@ -1,4 +1,4 @@
-package com.jihun.myshop.domain.user.controller;
+package com.jihun.myshop.domain.user.controller.view;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

@@ -1,6 +1,8 @@
 package com.jihun.myshop.global.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jihun.myshop.global.common.ApiResponseEntity;
+import com.jihun.myshop.global.exception.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
@@ -15,10 +17,16 @@ import java.io.IOException;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
 	private final ObjectMapper mapper = new ObjectMapper();
+
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setStatus(HttpStatus.FORBIDDEN.value());
-		response.getWriter().write(this.mapper.writeValueAsString(HttpServletResponse.SC_FORBIDDEN));
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.setCharacterEncoding("UTF-8");
+
+		ApiResponseEntity<Object> error = ApiResponseEntity.error(ErrorCode.UNAUTHORIZED_ACCESS);
+
+		mapper.writeValue(response.getWriter(), error);
+
 	}
 }

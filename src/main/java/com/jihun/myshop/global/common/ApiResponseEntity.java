@@ -17,7 +17,15 @@ public class ApiResponseEntity<T> {
         return new ApiResponseEntity<T>(200, "success", data);
     }
 
+    public static <T> ApiResponseEntity<T> success(T data, String message) {
+        return new ApiResponseEntity<T>(200, message, data);
+    }
+    public static <T> ApiResponseEntity<T> success(String message) {
+        return new ApiResponseEntity<T>(200, message, null);
+    }
+
     public static <T> ApiResponseEntity<T> error(ErrorCode errorCode) {
         return new ApiResponseEntity<T>(errorCode.getCode(), errorCode.getMessage(), null);
     }
+
 }

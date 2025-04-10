@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.jihun.myshop.global.exception.ErrorCode.USER_NOT_FOUND;
+import static com.jihun.myshop.global.exception.ErrorCode.INVALID_CREDENTIALS;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +30,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new CustomException(USER_NOT_FOUND));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
 
         List<GrantedAuthority> authorities = getGrantedAuthorities(user);
         UserResponse userResponse = userMapper.userToUserDetailsResponse(user);
