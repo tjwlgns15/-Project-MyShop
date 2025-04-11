@@ -16,3 +16,8 @@
 ## product
     - product, category CRUD 완료
     - product 페이징, 페치조인 적용
+
+## order ~ing
+    - order, orderItem 엔티티, 매퍼 제작
+    - 주문 등록
+    - payment 엔티티

@@ -1,8 +1,8 @@
 package com.jihun.myshop.global.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jihun.myshop.domain.user.entity.dto.UserDto;
 import com.jihun.myshop.global.common.ApiResponseEntity;
-import com.jihun.myshop.domain.user.entity.dto.UserResponse;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.jihun.myshop.domain.user.entity.dto.UserDto.*;
 
 
 @Component

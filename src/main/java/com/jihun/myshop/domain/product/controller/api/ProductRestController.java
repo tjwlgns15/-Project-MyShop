@@ -1,18 +1,13 @@
 package com.jihun.myshop.domain.product.controller.api;
 
 import com.jihun.myshop.domain.product.service.ProductService;
-import com.jihun.myshop.domain.user.entity.dto.UserResponse;
 import com.jihun.myshop.global.common.ApiResponseEntity;
 import com.jihun.myshop.global.common.CustomPageRequest;
 import com.jihun.myshop.global.common.PageResponse;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
-import java.util.List;
 
 import static com.jihun.myshop.domain.product.entity.dto.ProductDto.*;
 

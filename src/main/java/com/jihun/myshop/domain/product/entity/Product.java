@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,14 +31,14 @@ public class Product extends BaseTimeEntity {
 
     private String description;
 
-    private Long price;
+    private BigDecimal price;
 
-    private Long discountPrice;
+    private BigDecimal discountPrice;
 
     @Enumerated(EnumType.STRING)
     private DiscountType discountType;
 
-    private Long discountValue;
+    private BigDecimal discountValue;
 
     private int stockQuantity;
 
@@ -67,7 +68,7 @@ public class Product extends BaseTimeEntity {
 //    private List<OrderItem> orderItems = new ArrayList<>();
 
 
-    public void updateBasicInfo(String name, String description, Long price) {
+    public void updateBasicInfo(String name, String description, BigDecimal price) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -75,7 +76,7 @@ public class Product extends BaseTimeEntity {
     public void updateCategory(Category category) {
         this.category = category;
     }
-    public void updateDiscount(DiscountType discountType, Long discountValue, Long calculatedDiscountPrice) {
+    public void updateDiscount(DiscountType discountType, BigDecimal discountValue, BigDecimal calculatedDiscountPrice) {
         this.discountType = discountType;
         this.discountValue = discountValue;
         this.discountPrice = calculatedDiscountPrice;

@@ -8,6 +8,7 @@ import com.jihun.myshop.domain.product.entity.dto.ProductDto.ProductResponse;
 import com.jihun.myshop.domain.user.entity.User;
 import org.mapstruct.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import static com.jihun.myshop.domain.product.entity.DiscountType.FIXED_AMOUNT;
@@ -35,7 +36,7 @@ public interface ProductMapper {
     @Mapping(target = "discountType", source = "dto.discountType")
     @Mapping(target = "discountValue", source = "dto.discountValue")
     @Mapping(target = "discountPrice", source = "discountPrice")
-    Product fromCreateDto(ProductCreate dto, Category category, User user, Long discountPrice);
+    Product fromCreateDto(ProductCreate dto, Category category, User user, BigDecimal discountPrice);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntity(ProductUpdate dto, @MappingTarget Product entity);

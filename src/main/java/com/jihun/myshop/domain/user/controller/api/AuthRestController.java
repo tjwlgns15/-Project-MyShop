@@ -1,11 +1,15 @@
 package com.jihun.myshop.domain.user.controller.api;
 
-import com.jihun.myshop.global.common.ApiResponseEntity;
-import com.jihun.myshop.domain.user.entity.dto.UserResponse;
-import com.jihun.myshop.domain.user.entity.dto.UserSignupDto;
 import com.jihun.myshop.domain.user.service.UserService;
+import com.jihun.myshop.global.common.ApiResponseEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import static com.jihun.myshop.domain.user.entity.dto.UserDto.UserCreate;
+import static com.jihun.myshop.domain.user.entity.dto.UserDto.UserResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,7 +19,7 @@ public class AuthRestController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ApiResponseEntity<UserResponse> signup(@RequestBody UserSignupDto dto) {
+    public ApiResponseEntity<UserResponse> signup(@RequestBody UserCreate dto) {
         UserResponse userResponse = userService.createUser(dto);
         return ApiResponseEntity.success(userResponse);
     }

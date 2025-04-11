@@ -4,7 +4,8 @@ import com.jihun.myshop.domain.user.entity.Address;
 import com.jihun.myshop.domain.user.entity.Role;
 import com.jihun.myshop.domain.user.entity.RoleHierarchy;
 import com.jihun.myshop.domain.user.entity.User;
-import com.jihun.myshop.domain.user.entity.dto.UserSignupDto;
+import com.jihun.myshop.domain.user.entity.dto.UserDto;
+import com.jihun.myshop.domain.user.entity.dto.UserDto.UserCreate;
 import com.jihun.myshop.domain.user.entity.mapper.UserMapper;
 import com.jihun.myshop.domain.user.repository.AddressRepository;
 import com.jihun.myshop.domain.user.repository.RoleHierarchyRepository;
@@ -13,6 +14,7 @@ import com.jihun.myshop.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private final RoleRepository roleRepository;
     private final AddressRepository addressRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     private boolean alreadySetup = false;
 
@@ -67,13 +70,13 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     /**
      * UserSignupDto 생성 메서드 - address 필드 제거
      */
-    private UserSignupDto createSignupDto(String username, String password, String name, String phone) {
-        UserSignupDto dto = new UserSignupDto();
-        dto.setUsername(username);
-        dto.setPassword(password);
-        dto.setName(name);
-        dto.setPhone(phone);
-        return dto;
+    private UserCreate createSignupDto(String username, String password, String name, String phone) {
+        return UserCreate.builder()
+                .username(username)
+                .password(password)
+                .name(name)
+                .phone(phone)
+                .build();
     }
 
     public Role createRoleIfNotFound(String roleName, String roleDesc) {
@@ -86,11 +89,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         return roleRepository.save(role);
     }
 
-    public User createUserIfNotFound(UserSignupDto signupDto, Role role) {
+    public User createUserIfNotFound(UserCreate signupDto, Role role) {
         // 사용자 이름으로 기존 사용자 검색
         return userRepository.findByUsername(signupDto.getUsername()).orElseGet(() -> {
             // SignupDto를 User 엔티티로 변환 - MapStruct 사용
-            User newUser = userMapper.signupDtoToUser(signupDto);
+            User newUser = userMapper.fromCreateDto(signupDto, passwordEncoder);
 
             // 역할 추가 - addRole 메서드 활용
             newUser.addRole(role);

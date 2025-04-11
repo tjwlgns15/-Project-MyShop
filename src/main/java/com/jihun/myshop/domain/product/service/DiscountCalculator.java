@@ -3,6 +3,9 @@ package com.jihun.myshop.domain.product.service;
 import com.jihun.myshop.domain.product.entity.DiscountType;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 @Component
 public class DiscountCalculator {
 
@@ -14,15 +17,18 @@ public class DiscountCalculator {
      * @param discountValue 할인 값
      * @return 할인된 가격
      */
-    public Long calculateDiscountPrice(Long price, DiscountType discountType, Long discountValue) {
-        if (price == null || discountValue == null || discountValue <= 0) {
+    public BigDecimal calculateDiscountPrice(BigDecimal price, DiscountType discountType, BigDecimal discountValue) {
+        if (price == null || discountValue == null || discountValue.compareTo(BigDecimal.ZERO) <= 0) {
             return price;
         }
 
         if (discountType == DiscountType.PERCENTAGE) {
-            return price - (price * discountValue / 100);
+            BigDecimal discount = price.multiply(discountValue)
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+            return price.subtract(discount);
         } else if (discountType == DiscountType.FIXED_AMOUNT) {
-            return Math.max(0, price - discountValue);
+            BigDecimal discounted = price.subtract(discountValue);
+            return discounted.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : discounted;
         }
 
         return price;

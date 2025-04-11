@@ -1,12 +1,14 @@
 package com.jihun.myshop.global.security.customUserDetails;
 
-import com.jihun.myshop.domain.user.entity.dto.UserResponse;
+import com.jihun.myshop.domain.user.entity.dto.UserDto;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+
+import static com.jihun.myshop.domain.user.entity.dto.UserDto.*;
 
 @Data
 public class CustomUserDetails implements UserDetails {

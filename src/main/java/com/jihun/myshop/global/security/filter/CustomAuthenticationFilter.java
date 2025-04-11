@@ -2,7 +2,7 @@ package com.jihun.myshop.global.security.filter;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jihun.myshop.domain.user.entity.dto.UserResponse;
+import com.jihun.myshop.domain.user.entity.dto.UserDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpMethod;
@@ -20,6 +20,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+
+import static com.jihun.myshop.domain.user.entity.dto.UserDto.*;
 
 public class CustomAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
     private final ObjectMapper objectMapper = new ObjectMapper()

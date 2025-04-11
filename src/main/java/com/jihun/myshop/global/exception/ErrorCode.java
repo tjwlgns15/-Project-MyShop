@@ -19,6 +19,7 @@ public enum ErrorCode {
 
     CATEGORY_NOT_EXIST(404, "카테고리를 찾을 수 없습니다."),
     PRODUCT_NOT_FOUND(404, "상품 정보를 찾을 수 없습니다."),
+    OUT_OF_STOCK(400, "재고량이 부족합니다."),
 
     BED_REQUEST(400, "잘못된 설정입니다.")
 

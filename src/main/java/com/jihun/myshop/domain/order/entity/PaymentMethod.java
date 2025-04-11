@@ -4,11 +4,13 @@ import lombok.Getter;
 
 @Getter
 public enum PaymentMethod {
-    CREDIT_CARD("신용카드 결제"),
-    DEBIT_CARD("체크카드 결제"),
+    CREDIT_CARD("신용카드"),
     BANK_TRANSFER("계좌이체"),
-    PAYPAL("페이팔 결제"),
-    POINT("포인트 결제");
+    VIRTUAL_ACCOUNT("가상계좌"),
+    MOBILE_PAYMENT("모바일결제"),
+    KAKAO_PAY("카카오페이"),
+    NAVER_PAY("네이버페이"),
+    POINT("포인트결제")
 
     ;
 

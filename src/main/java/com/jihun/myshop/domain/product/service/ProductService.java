@@ -3,12 +3,10 @@ package com.jihun.myshop.domain.product.service;
 import com.jihun.myshop.domain.product.entity.Category;
 import com.jihun.myshop.domain.product.entity.Product;
 import com.jihun.myshop.domain.product.entity.ProductStatus;
-import com.jihun.myshop.domain.product.entity.dto.ProductDto;
 import com.jihun.myshop.domain.product.entity.mapper.ProductMapper;
 import com.jihun.myshop.domain.product.repository.CategoryRepository;
 import com.jihun.myshop.domain.product.repository.ProductRepository;
 import com.jihun.myshop.domain.user.entity.User;
-import com.jihun.myshop.domain.user.entity.dto.UserResponse;
 import com.jihun.myshop.domain.user.repository.UserRepository;
 import com.jihun.myshop.global.common.CustomPageRequest;
 import com.jihun.myshop.global.common.PageResponse;
@@ -20,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +68,7 @@ public class ProductService {
         User user = getUserById(currentUser.getId());
         Category category = getCategoryById(request.getCategoryId());
 
-        Long discountPrice = discountCalculator.calculateDiscountPrice(
+        BigDecimal discountPrice = discountCalculator.calculateDiscountPrice(
                 request.getPrice(),
                 request.getDiscountType(),
                 request.getDiscountValue()
@@ -140,11 +139,11 @@ public class ProductService {
 
         // 할인 정보 업데이트
         if (request.getPrice() != null || request.getDiscountType() != null || request.getDiscountValue() != null) {
-            Long price = request.getPrice() != null ? request.getPrice() : product.getPrice();
+            BigDecimal price = request.getPrice() != null ? request.getPrice() : product.getPrice();
             var discountType = request.getDiscountType() != null ? request.getDiscountType() : product.getDiscountType();
             var discountValue = request.getDiscountValue() != null ? request.getDiscountValue() : product.getDiscountValue();
 
-            Long calculatedDiscountPrice = discountCalculator.calculateDiscountPrice(price, discountType, discountValue);
+            BigDecimal calculatedDiscountPrice = discountCalculator.calculateDiscountPrice(price, discountType, discountValue);
             product.updateDiscount(discountType, discountValue, calculatedDiscountPrice);
         }
 

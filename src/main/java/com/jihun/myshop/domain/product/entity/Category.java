@@ -34,7 +34,7 @@ public class Category extends BaseTimeEntity {
     @OneToMany(mappedBy = "parent")
     private List<Category> subcategories = new ArrayList<>();
 
-
+    // todo: 나중에 매퍼로 변경
     public static Category createNewCategory(String name, String description, Category parent) {
         return Category.builder()
                 .name(name)

@@ -4,10 +4,11 @@ import lombok.Getter;
 
 @Getter
 public enum PaymentStatus {
-    PENDING("결제 진행 중"),
+    PENDING("결제 대기중"),
     COMPLETED("결제 완료"),
     FAILED("결제 실패"),
-    REFUNDED("환불"),
+    CANCELED("결제 취소"),
+    REFUNDED("환불 완료")
 
     ;
 

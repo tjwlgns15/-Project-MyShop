@@ -1,20 +1,15 @@
 package com.jihun.myshop.domain.product.controller.api;
 
-import com.jihun.myshop.domain.product.entity.Category;
-import com.jihun.myshop.domain.product.entity.dto.CategoryDto;
 import com.jihun.myshop.domain.product.entity.dto.CategoryDto.CategoryResponse;
 import com.jihun.myshop.domain.product.service.CategoryService;
-import com.jihun.myshop.domain.user.entity.dto.UserResponse;
-import com.jihun.myshop.domain.user.service.UserService;
 import com.jihun.myshop.global.common.ApiResponseEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
-import static com.jihun.myshop.domain.product.entity.dto.CategoryDto.*;
+import static com.jihun.myshop.domain.product.entity.dto.CategoryDto.CategoryCreate;
+import static com.jihun.myshop.domain.product.entity.dto.CategoryDto.CategoryUpdate;
 
 @RestController
 @RequiredArgsConstructor

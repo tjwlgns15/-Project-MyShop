@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +24,10 @@ public class ProductDto {
         private String name;
         private String description;
         private Long categoryId;
-        private Long price;
+        private BigDecimal price;
         private int stockQuantity;
         private DiscountType discountType;
-        private Long discountValue;
+        private BigDecimal discountValue;
         private String mainImageUrl;
     }
 
@@ -38,9 +39,9 @@ public class ProductDto {
         private String name;
         private String description;
         private Long categoryId;
-        private Long price;
+        private BigDecimal price;
         private DiscountType discountType;
-        private Long discountValue;
+        private BigDecimal discountValue;
         private int stockQuantity;
         private String mainImageUrl;
         private ProductStatus productStatus;
@@ -54,10 +55,10 @@ public class ProductDto {
         private Long id;
         private String name;
         private String description;
-        private Long price;
-        private Long discountPrice;
+        private BigDecimal price;
+        private BigDecimal discountPrice;
         private DiscountType discountType;
-        private Long discountValue;
+        private BigDecimal discountValue;
         private int stockQuantity;
         private String mainImageUrl;
         private String categoryName;

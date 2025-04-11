@@ -23,12 +23,12 @@ public class Payment extends BaseTimeEntity {
     private Order order;
 
     @Enumerated(EnumType.STRING)
-    private PaymentMethod method;
+    private PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
-    private PaymentStatus status;
+    private PaymentStatus paymentStatus;
 
-    private String transactionId;
+    private String paymentKey;
     private Long amount;
-    private String paymentGatewayResponse; // JSON 형태의 게이트웨이 응답
+    private String failReason;
 }

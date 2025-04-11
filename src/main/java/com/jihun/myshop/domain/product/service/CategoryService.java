@@ -28,6 +28,7 @@ public class CategoryService {
     @Transactional
     public CategoryResponse createCategory(CategoryCreate dto) {
 
+        // todo: 관리자 권한 확인
         Category parentCategory = null;
         if (dto.getParentId() != null) {
             parentCategory = getCategoryById(dto.getParentId());
