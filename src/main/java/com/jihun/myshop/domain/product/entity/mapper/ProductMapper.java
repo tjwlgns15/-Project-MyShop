@@ -1,7 +1,6 @@
 package com.jihun.myshop.domain.product.entity.mapper;
 
 import com.jihun.myshop.domain.product.entity.Category;
-import com.jihun.myshop.domain.product.entity.DiscountType;
 import com.jihun.myshop.domain.product.entity.Product;
 import com.jihun.myshop.domain.product.entity.ProductStatus;
 import com.jihun.myshop.domain.product.entity.dto.ProductDto.ProductResponse;
@@ -11,10 +10,8 @@ import org.mapstruct.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import static com.jihun.myshop.domain.product.entity.DiscountType.FIXED_AMOUNT;
-import static com.jihun.myshop.domain.product.entity.DiscountType.PERCENTAGE;
-import static com.jihun.myshop.domain.product.entity.dto.ProductDto.ProductCreate;
-import static com.jihun.myshop.domain.product.entity.dto.ProductDto.ProductUpdate;
+import static com.jihun.myshop.domain.product.entity.dto.ProductDto.ProductCreateDto;
+import static com.jihun.myshop.domain.product.entity.dto.ProductDto.ProductUpdateDto;
 
 @Mapper(componentModel = "spring", imports = {ArrayList.class, ProductStatus.class})
 public interface ProductMapper {
@@ -28,16 +25,16 @@ public interface ProductMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "category", source = "category")
     @Mapping(target = "seller", source = "user")
-    @Mapping(target = "name", source = "dto.name")
-    @Mapping(target = "description", source = "dto.description")
-    @Mapping(target = "price", source = "dto.price")
+    @Mapping(target = "name", source = "productCreateDto.name")
+    @Mapping(target = "description", source = "productCreateDto.description")
+    @Mapping(target = "price", source = "productCreateDto.price")
     @Mapping(target = "reviews", expression = "java(new ArrayList<>())")
     @Mapping(target = "productStatus", expression = "java(ProductStatus.ACTIVE)")
-    @Mapping(target = "discountType", source = "dto.discountType")
-    @Mapping(target = "discountValue", source = "dto.discountValue")
+    @Mapping(target = "discountType", source = "productCreateDto.discountType")
+    @Mapping(target = "discountValue", source = "productCreateDto.discountValue")
     @Mapping(target = "discountPrice", source = "discountPrice")
-    Product fromCreateDto(ProductCreate dto, Category category, User user, BigDecimal discountPrice);
+    Product fromCreateDto(ProductCreateDto productCreateDto, Category category, User user, BigDecimal discountPrice);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntity(ProductUpdate dto, @MappingTarget Product entity);
+    void updateEntity(ProductUpdateDto productUpdateDto, @MappingTarget Product entity);
 }

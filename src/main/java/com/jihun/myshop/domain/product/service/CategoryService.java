@@ -26,7 +26,7 @@ public class CategoryService {
 
 
     @Transactional
-    public CategoryResponse createCategory(CategoryCreate dto) {
+    public CategoryResponseDto createCategory(CategoryCreateDto dto) {
 
         // todo: 관리자 권한 확인
         Category parentCategory = null;
@@ -45,25 +45,25 @@ public class CategoryService {
         return categoryMapper.fromEntity(savedCategory);
     }
 
-    public CategoryResponse getCategory(Long categoryId) {
+    public CategoryResponseDto getCategory(Long categoryId) {
         Category category = getCategoryById(categoryId);
         return categoryMapper.fromEntity(category);
     }
 
     // 루트 카테고리만 조회 (부모가 없는 카테고리)
-    public List<CategoryResponse> getRootCategories() {
+    public List<CategoryResponseDto> getRootCategories() {
         List<Category> rootCategories = categoryRepository.findByParentIsNull();
         return categoryMapper.fromEntityList(rootCategories);
     }
 
     // 특정 카테고리의 하위 카테고리 조회
-    public List<CategoryResponse> getSubcategories(Long parentId) {
+    public List<CategoryResponseDto> getSubcategories(Long parentId) {
         Category parentCategory = getCategoryById(parentId);
         return categoryMapper.fromEntityList(parentCategory.getSubcategories());
     }
 
     @Transactional
-    public CategoryResponse updateCategory(Long categoryId, CategoryUpdate dto) {
+    public CategoryResponseDto updateCategory(Long categoryId, CategoryUpdateDto dto) {
         Category category = getCategoryById(categoryId);
 
         // 자기 자신을 부모로 설정하는 것을 방지

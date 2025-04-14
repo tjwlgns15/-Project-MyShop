@@ -1,4 +1,4 @@
-package com.jihun.myshop.admin.controller;
+package com.jihun.myshop.admin.controller.view;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

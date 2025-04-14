@@ -1,7 +1,5 @@
 package com.jihun.myshop.domain.product.entity;
 
-import com.jihun.myshop.domain.product.entity.dto.ProductDto;
-import com.jihun.myshop.domain.product.entity.dto.ProductDto.ProductUpdate;
 import com.jihun.myshop.domain.user.entity.User;
 import com.jihun.myshop.global.common.BaseTimeEntity;
 import jakarta.persistence.*;

@@ -16,7 +16,7 @@ public class PaymentDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PaymentCreate {
+    public static class PaymentCreateDto {
         private Long orderId;
         private PaymentMethod paymentMethod;
     }
@@ -25,16 +25,16 @@ public class PaymentDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PaymentResponse {
+    public static class PaymentResponseDto {
         private Long id;
         private Long orderId;
         private String orderNumber;
         private PaymentMethod paymentMethod;
-//        private String paymentMethodDescription;
+        private String paymentMethodDescription;
         private PaymentStatus paymentStatus;
-//        private String paymentStatusDescription;
-        private String paymentKey;
+        private String paymentStatusDescription;
         private BigDecimal amount;
+        private String paymentKey;
         private String failReason;
         private LocalDateTime createdAt;
     }
@@ -44,7 +44,7 @@ public class PaymentDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PaymentComplete {
+    public static class PaymentCompleteDto {
         private String paymentKey;
     }
 
@@ -53,7 +53,7 @@ public class PaymentDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PaymentCancel {
+    public static class PaymentCancelDto {
         private String reason;
     }
 

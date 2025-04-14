@@ -20,6 +20,11 @@ public class CustomUserDetails implements UserDetails {
         return userResponse.getId();
     }
 
+    public boolean hasRole(String roleName) {
+        return this.roles.stream()
+                .anyMatch(authority -> authority.getAuthority().equals(roleName));
+    }
+
     @Override
     public String getUsername() {
         return userResponse.getUsername();

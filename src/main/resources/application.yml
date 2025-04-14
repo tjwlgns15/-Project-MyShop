@@ -24,5 +24,15 @@ spring:
           lob:
             non_contextual_creation: true
 
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method
+  packages-to-scan: com.jihun.myshop
+  pathsToMatch: /api/**, /public/**
+
 server:
   port: 8081

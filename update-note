@@ -21,3 +21,7 @@
     - order, orderItem 엔티티, 매퍼 제작
     - 주문 등록
     - payment 엔티티
+
+## order
+    - order, orderItem, payment CRUD 완료
+

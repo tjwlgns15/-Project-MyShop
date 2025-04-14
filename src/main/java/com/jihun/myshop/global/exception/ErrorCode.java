@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
+
+    // auth
     DUPLICATE_USERNAME(400, "이미 사용중인계정입니다."),
     ROLE_NOT_FOUND(404, "등록되지 않은 권한 정보입니다."),
     INVALID_CREDENTIALS(401, "아이디 또는 비밀번호가 일치하지 않습니다."),
@@ -17,10 +19,18 @@ public enum ErrorCode {
     CREDENTIALS_EXPIRED(401, "자격 증명이 만료되었습니다"),
     AUTHENTICATION_FAILED(401, "인증에 실패하였습니다."),
 
+    // product
     CATEGORY_NOT_EXIST(404, "카테고리를 찾을 수 없습니다."),
     PRODUCT_NOT_FOUND(404, "상품 정보를 찾을 수 없습니다."),
     OUT_OF_STOCK(400, "재고량이 부족합니다."),
 
+    // order
+    ORDER_NOT_FOUND(404, "주문 정보를 찾을 수 없습니다."),
+    PAYMENT_NOT_FOUND(404, "결제 정보를 찾을 수 없습니다."),
+    PAYMENT_ALREADY_EXIST(400, "이미 결제가 생성된 주문입니다."),
+
+
+    // etc..
     BED_REQUEST(400, "잘못된 설정입니다.")
 
 

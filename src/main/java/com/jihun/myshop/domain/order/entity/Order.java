@@ -50,7 +50,7 @@ public class Order extends BaseTimeEntity {
     private Address billingAddress;
 
     private BigDecimal totalAmount;  // 할인 전 총 금액
-    private BigDecimal discountAmount;  // 할인 금액
+    private BigDecimal discountAmount;  // 주문 시 할인 금액
     private BigDecimal shippingFee;  // 배송비
     private BigDecimal finalAmount;  // 최종 금액
 
@@ -80,8 +80,6 @@ public class Order extends BaseTimeEntity {
 
     private static String generateOrderNumber() {
         return UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-
-
     }
 
     public void addOrderItem(OrderItem orderItem) {
@@ -110,5 +108,35 @@ public class Order extends BaseTimeEntity {
     public void applyDiscount(BigDecimal discountAmount) {
         this.discountAmount = discountAmount;
         recalculateAmounts();
+    }
+
+
+    public void updateOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+
+        LocalDateTime now = LocalDateTime.now();
+        switch (orderStatus) {
+            case PAID -> this.paidAt = now;
+            case SHIPPED -> this.shippedAt = now;
+            case DELIVERED -> this.deliveredAt = now;
+        }
+    }
+
+    public void cancelOrder(String reason) {
+        if (this.orderStatus != OrderStatus.PAYMENT_PENDING &&
+                this.orderStatus != OrderStatus.PAID &&
+                this.orderStatus != OrderStatus.PREPARING) {
+            throw new IllegalStateException("이미 배송된 주문은 취소할 수 없습니다.");
+        }
+
+        this.orderStatus = OrderStatus.CANCELED;
+        this.cancelReason = reason;
+    }
+
+    public void setTrackingNumber(String trackingNumber) {
+        this.trackingNumber = trackingNumber;
+        if (this.orderStatus == OrderStatus.PREPARING) {
+            this.updateOrderStatus(OrderStatus.SHIPPED);
+        }
     }
 }

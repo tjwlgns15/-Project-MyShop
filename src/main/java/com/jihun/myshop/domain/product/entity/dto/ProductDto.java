@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class ProductDto {
 
@@ -20,7 +17,7 @@ public class ProductDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProductCreate {
+    public static class ProductCreateDto {
         private String name;
         private String description;
         private Long categoryId;
@@ -35,7 +32,7 @@ public class ProductDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProductUpdate {
+    public static class ProductUpdateDto {
         private String name;
         private String description;
         private Long categoryId;

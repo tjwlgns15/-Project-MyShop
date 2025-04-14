@@ -13,7 +13,7 @@ public class OrderItemDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class OrderItemCreate {
+    public static class OrderItemCreateDto {
         private Long productId;
         private int quantity;
 
@@ -23,7 +23,7 @@ public class OrderItemDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class OrderItemResponse {
+    public static class OrderItemResponseDto {
         private Long id;
         private Long productId;
         private String productName;

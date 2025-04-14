@@ -64,17 +64,18 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse createProduct(ProductCreate request, CustomUserDetails currentUser) {
+    public ProductResponse createProduct(ProductCreateDto productCreateDto, CustomUserDetails currentUser) {
         User user = getUserById(currentUser.getId());
-        Category category = getCategoryById(request.getCategoryId());
+        Category category = getCategoryById(productCreateDto.getCategoryId());
 
         BigDecimal discountPrice = discountCalculator.calculateDiscountPrice(
-                request.getPrice(),
-                request.getDiscountType(),
-                request.getDiscountValue()
+                productCreateDto.getPrice(),
+                productCreateDto.getDiscountType(),
+                productCreateDto.getDiscountValue()
         );
 
-        Product product = productMapper.fromCreateDto(request, category, user, discountPrice);
+        // todo: 변환 메서드? 생성자?
+        Product product = productMapper.fromCreateDto(productCreateDto, category, user, discountPrice);
         Product saveProduct = productRepository.save(product);
 
         return productMapper.fromEntity(saveProduct);
@@ -122,26 +123,26 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse updateProduct(Long productId, ProductUpdate request, CustomUserDetails userDetails) {
+    public ProductResponse updateProduct(Long productId, ProductUpdateDto productUpdateDto, CustomUserDetails userDetails) {
         Product product = getProductById(productId);
 
         // 권한 검증: ADMIN 또는 판매자 본인만 수정 가능
         authorizationService.validateProductAuthorization(product, userDetails);
 
-        Category category = getCategoryById(request.getCategoryId());
+        Category category = getCategoryById(productUpdateDto.getCategoryId());
 
         // 기본 정보 업데이트
-        product.updateBasicInfo(request.getName(), request.getDescription(), request.getPrice());
+        product.updateBasicInfo(productUpdateDto.getName(), productUpdateDto.getDescription(), productUpdateDto.getPrice());
         product.updateCategory(category);
-        product.updateStockQuantity(request.getStockQuantity());
-        product.updateMainImage(request.getMainImageUrl());
-        product.updateStatus(request.getProductStatus());
+        product.updateStockQuantity(productUpdateDto.getStockQuantity());
+        product.updateMainImage(productUpdateDto.getMainImageUrl());
+        product.updateStatus(productUpdateDto.getProductStatus());
 
         // 할인 정보 업데이트
-        if (request.getPrice() != null || request.getDiscountType() != null || request.getDiscountValue() != null) {
-            BigDecimal price = request.getPrice() != null ? request.getPrice() : product.getPrice();
-            var discountType = request.getDiscountType() != null ? request.getDiscountType() : product.getDiscountType();
-            var discountValue = request.getDiscountValue() != null ? request.getDiscountValue() : product.getDiscountValue();
+        if (productUpdateDto.getPrice() != null || productUpdateDto.getDiscountType() != null || productUpdateDto.getDiscountValue() != null) {
+            BigDecimal price = productUpdateDto.getPrice() != null ? productUpdateDto.getPrice() : product.getPrice();
+            var discountType = productUpdateDto.getDiscountType() != null ? productUpdateDto.getDiscountType() : product.getDiscountType();
+            var discountValue = productUpdateDto.getDiscountValue() != null ? productUpdateDto.getDiscountValue() : product.getDiscountValue();
 
             BigDecimal calculatedDiscountPrice = discountCalculator.calculateDiscountPrice(price, discountType, discountValue);
             product.updateDiscount(discountType, discountValue, calculatedDiscountPrice);

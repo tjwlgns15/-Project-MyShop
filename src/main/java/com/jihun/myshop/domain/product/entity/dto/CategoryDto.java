@@ -1,19 +1,12 @@
 package com.jihun.myshop.domain.product.entity.dto;
 
-import com.jihun.myshop.domain.product.entity.Category;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CategoryDto {
 
@@ -21,7 +14,7 @@ public class CategoryDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CategoryCreate {
+    public static class CategoryCreateDto {
         private String name;
         private String description;
         private Long parentId;
@@ -31,25 +24,25 @@ public class CategoryDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CategoryUpdate {
-        private String name;
-        private String description;
-        private Long parentId;
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CategoryResponse {
+    public static class CategoryResponseDto {
         private Long id;
         private String name;
         private String description;
         private Long parentId;
         private String parentName;
-        private List<CategoryResponse> subcategories;
+        private List<CategoryResponseDto> subcategories;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CategoryUpdateDto {
+        private String name;
+        private String description;
+        private Long parentId;
     }
 
     @Data

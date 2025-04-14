@@ -1,8 +1,8 @@
 package com.jihun.myshop.domain.order.entity.dto;
 
 import com.jihun.myshop.domain.order.entity.OrderStatus;
-import com.jihun.myshop.domain.order.entity.dto.OrderItemDto.OrderItemCreate;
-import com.jihun.myshop.domain.order.entity.dto.OrderItemDto.OrderItemResponse;
+import com.jihun.myshop.domain.order.entity.dto.OrderItemDto.OrderItemCreateDto;
+import com.jihun.myshop.domain.order.entity.dto.OrderItemDto.OrderItemResponseDto;
 import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressCreate;
 import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressResponse;
 import lombok.AllArgsConstructor;
@@ -20,8 +20,8 @@ public class OrderDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class OrderCreate {
-        private List<OrderItemCreate> items;
+    public static class OrderCreateDto {
+        private List<OrderItemCreateDto> items;
         private AddressCreate shippingAddress;
         private AddressCreate billingAddress;
         private boolean sameAsBillingAddress;
@@ -33,26 +33,32 @@ public class OrderDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class OrderResponse {
+    public static class OrderResponseDto {
         private Long id;
         private String orderNumber;
+        private String orderStatusDescription;
+        private OrderStatus orderStatus;
         private Long userId;
         private String username;
-        private OrderStatus orderStatus;
-        private String orderStatusDescription;
-        private List<OrderItemResponse> orderItems;
+        private List<OrderItemResponseDto> orderItems;
+
         private BigDecimal totalAmount;
-        private BigDecimal shippingFee;
         private BigDecimal discountAmount;
+        private BigDecimal shippingFee;
         private BigDecimal finalAmount;
+
         private LocalDateTime createdAt;
         private LocalDateTime paidAt;
         private LocalDateTime shippedAt;
         private LocalDateTime deliveredAt;
-        private String trackingNumber;
-        private String cancelReason;
+
         private AddressResponse shippingAddress;
         private AddressResponse billingAddress;
+
+        private String trackingNumber;
+        private String cancelReason;
+
+        // payment 없음
     }
 
     // 주문 상태 업데이트 DTO
