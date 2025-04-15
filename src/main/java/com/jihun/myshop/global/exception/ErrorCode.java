@@ -23,11 +23,20 @@ public enum ErrorCode {
     CATEGORY_NOT_EXIST(404, "카테고리를 찾을 수 없습니다."),
     PRODUCT_NOT_FOUND(404, "상품 정보를 찾을 수 없습니다."),
     OUT_OF_STOCK(400, "재고량이 부족합니다."),
+    PRODUCT_NOT_AVAILABLE(400, "현재는 구매할 수 없는 상품입니다."),
+
 
     // order
     ORDER_NOT_FOUND(404, "주문 정보를 찾을 수 없습니다."),
     PAYMENT_NOT_FOUND(404, "결제 정보를 찾을 수 없습니다."),
     PAYMENT_ALREADY_EXIST(400, "이미 결제가 생성된 주문입니다."),
+
+    // cart
+    INVALID_INPUT_VALUE(400, "수량은 1 이상이어야 합니다."),
+    CART_ITEM_NOT_FOUND(404, "카트에서 물품을 찾지 못 했습니다."),
+    CART_IS_EMPTY(400, "카트가 비어있습니다."),
+    DUPLICATE_CART_ITEM(400, "중복 선택 된 품목이 있습니다."),
+
 
 
     // etc..

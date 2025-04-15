@@ -40,18 +40,6 @@ public class UserDto {
         private Set<String> userRoles;
         private AddressResponse defaultAddress;
 //        private List<OrderResponse> orders;
-
-        public boolean isAdmin() {
-            if (this.userRoles != null) {
-                for (String role : this.userRoles) {
-                    if (role.contains("ROLE_ADMIN")) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
     }
 
 }

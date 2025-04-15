@@ -2,11 +2,10 @@ package com.jihun.myshop.domain.user.controller.api;
 
 import com.jihun.myshop.domain.user.service.UserService;
 import com.jihun.myshop.global.common.ApiResponseEntity;
+import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import static com.jihun.myshop.domain.user.entity.dto.UserDto.UserCreate;
 import static com.jihun.myshop.domain.user.entity.dto.UserDto.UserResponse;
@@ -23,6 +22,10 @@ public class AuthRestController {
         UserResponse userResponse = userService.createUser(dto);
         return ApiResponseEntity.success(userResponse);
     }
+
+
+
+
 
 
 }

@@ -58,12 +58,7 @@ public class OrderRestController {
     public ApiResponseEntity<PageResponse<OrderResponseDto>> getUserOrders(@PathVariable Long userId,
                                                                            CustomPageRequest pageRequest,
                                                                            @AuthenticationPrincipal CustomUserDetails currentUser) {
-        // 관리자 권한 체크
-        if (!currentUser.hasRole("ROLE_ADMIN")) {
-            return ApiResponseEntity.error(UNAUTHORIZED_ACCESS);
-        }
-
-        PageResponse<OrderResponseDto> response = orderService.getUserOrders(userId, pageRequest);
+        PageResponse<OrderResponseDto> response = orderService.getUserOrdersToAdmin(userId, pageRequest, currentUser);
         return ApiResponseEntity.success(response);
     }
 
@@ -107,11 +102,7 @@ public class OrderRestController {
     public ApiResponseEntity<PageResponse<OrderResponseDto>> getOrdersByStatusToAdmin(@PathVariable List<OrderStatus> statuses,
                                                                                       CustomPageRequest pageRequest,
                                                                                       @AuthenticationPrincipal CustomUserDetails currentUser) {
-        if (!currentUser.hasRole("ROLE_ADMIN")) {
-            return ApiResponseEntity.error(UNAUTHORIZED_ACCESS);
-        }
-
-        PageResponse<OrderResponseDto> response = orderService.getOrdersByStatusToAdmin(statuses, pageRequest);
+        PageResponse<OrderResponseDto> response = orderService.getOrdersByStatusToAdmin(statuses, pageRequest, currentUser);
         return ApiResponseEntity.success(response);
     }
 
@@ -119,11 +110,7 @@ public class OrderRestController {
     @GetMapping("/count/status/{status}")
     public ApiResponseEntity<Long> countOrdersByStatus(@PathVariable OrderStatus status,
                                                        @AuthenticationPrincipal CustomUserDetails currentUser) {
-        if (!currentUser.hasRole("ROLE_ADMIN")) {
-            return ApiResponseEntity.error(UNAUTHORIZED_ACCESS);
-        }
-
-        long count = orderService.countOrdersByStatus(status);
+        long count = orderService.countOrdersByStatus(status, currentUser);
         return ApiResponseEntity.success(count);
     }
 }

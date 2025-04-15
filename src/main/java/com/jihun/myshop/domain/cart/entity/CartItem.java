@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "cart_items")
 @Getter
@@ -28,5 +30,40 @@ public class CartItem extends BaseTimeEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @Column(nullable = false)
+    private int quantity;
+
+    @Column(nullable = false)
+    private BigDecimal price;
+
+    @Column(nullable = false)
+    private BigDecimal totalPrice;
+
+
+    public void updateQuantity(int quantity) {
+        this.quantity = quantity;
+        recalculateTotalPrice();
+    }
+
+    public void incrementQuantity() {
+        this.quantity++;
+        recalculateTotalPrice();
+    }
+
+    public void decrementQuantity() {
+        if (this.quantity > 1) {
+            this.quantity--;
+            recalculateTotalPrice();
+        }
+    }
+
+    private void recalculateTotalPrice() {
+        if (product.getDiscountPrice() != null) {
+            this.price = product.getDiscountPrice();
+        } else {
+            this.price = product.getPrice();
+        }
+        this.totalPrice = this.price.multiply(BigDecimal.valueOf(quantity));
+    }
 
 }

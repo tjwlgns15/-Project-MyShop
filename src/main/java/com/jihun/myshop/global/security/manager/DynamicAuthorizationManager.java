@@ -1,7 +1,7 @@
 package com.jihun.myshop.global.security.manager;
 
 import com.jihun.myshop.global.security.mapper.MapBasedUrlRoleMapper;
-import com.jihun.myshop.global.security.service.CustomAuthorizationService;
+import com.jihun.myshop.global.security.service.DynamicAuthorizationService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
@@ -23,18 +23,18 @@ import static org.springframework.security.web.util.matcher.RequestMatcher.*;
 
 @Component
 @RequiredArgsConstructor
-public class CustomAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
+public class DynamicAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
 
     private final HandlerMappingIntrospector handlerMappingIntrospector;
     private static final AuthorizationDecision ACCESS = new AuthorizationDecision(true);
-    private CustomAuthorizationService customAuthorizationService;
+    private DynamicAuthorizationService dynamicAuthorizationService;
     List<RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>>> mappings;
     private final RoleHierarchyImpl roleHierarchy;
 
     @PostConstruct
     public void mapping() {
-        customAuthorizationService = new CustomAuthorizationService(new MapBasedUrlRoleMapper());
-        mappings = customAuthorizationService.getUrlRoleMappings()
+        dynamicAuthorizationService = new DynamicAuthorizationService(new MapBasedUrlRoleMapper());
+        mappings = dynamicAuthorizationService.getUrlRoleMappings()
                 .entrySet().stream()
                 .map(entry -> new RequestMatcherEntry<>(
                         new MvcRequestMatcher(handlerMappingIntrospector, entry.getKey()),

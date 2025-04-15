@@ -12,6 +12,7 @@ import com.jihun.myshop.global.common.CustomPageRequest;
 import com.jihun.myshop.global.common.PageResponse;
 import com.jihun.myshop.global.exception.CustomException;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
+import com.jihun.myshop.global.security.service.AuthorizationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +36,7 @@ public class ProductService {
     private final UserRepository userRepository;
     private final ProductMapper productMapper;
     private final DiscountCalculator discountCalculator;
-    private final ProductAuthorizationService authorizationService;
+    private final AuthorizationService authorizationService;
 
 
     private Product getProductById(Long productId) {
@@ -127,7 +128,9 @@ public class ProductService {
         Product product = getProductById(productId);
 
         // 권한 검증: ADMIN 또는 판매자 본인만 수정 가능
-        authorizationService.validateProductAuthorization(product, userDetails);
+        if (!authorizationService.canModifyProduct(userDetails, product)) {
+            throw new CustomException(UNAUTHORIZED_ACCESS);
+        }
 
         Category category = getCategoryById(productUpdateDto.getCategoryId());
 
@@ -156,7 +159,9 @@ public class ProductService {
         Product product = getProductById(productId);
 
         // 권한 검증: ADMIN 또는 판매자 본인만 삭제 가능
-        authorizationService.validateProductAuthorization(product, userDetails);
+        if (!authorizationService.canModifyProduct(userDetails, product)) {
+            throw new CustomException(UNAUTHORIZED_ACCESS);
+        }
 
         // 논리적 삭제 처리 (상태를 DELETED로 변경)
         product.markAsDeleted();

@@ -1,6 +1,6 @@
 package com.jihun.myshop.global.security.config.manager;
 
-import com.jihun.myshop.global.security.manager.CustomAuthorizationManager;
+import com.jihun.myshop.global.security.manager.DynamicAuthorizationManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AuthorizationComponentsManager {
 
-    private final CustomAuthorizationManager customAuthorizationManager;
+    private final DynamicAuthorizationManager dynamicAuthorizationManager;
 
 
     public void configureCsrf(CsrfConfigurer<HttpSecurity> csrf) {
@@ -26,6 +26,6 @@ public class AuthorizationComponentsManager {
     }
 
     public void configureAuthorization(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
-        auth.anyRequest().access(customAuthorizationManager);
+        auth.anyRequest().access(dynamicAuthorizationManager);
     }
 }

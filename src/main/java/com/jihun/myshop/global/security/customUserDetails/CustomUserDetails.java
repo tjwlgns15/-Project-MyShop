@@ -16,13 +16,9 @@ public class CustomUserDetails implements UserDetails {
     private final UserResponse userResponse;
     private final List<GrantedAuthority> roles;
 
+
     public Long getId() {
         return userResponse.getId();
-    }
-
-    public boolean hasRole(String roleName) {
-        return this.roles.stream()
-                .anyMatch(authority -> authority.getAuthority().equals(roleName));
     }
 
     @Override

@@ -25,3 +25,7 @@
 ## order
     - order, orderItem, payment CRUD 완료
 
+## cart
+    - cart, cartItem CRUD 완료
+    - 분산 되어있던 관리자 검사 메서드 정리 - AuthorizationService
+    - Cart -> Order 변환 기능 진행 중 (CartToOrderService)

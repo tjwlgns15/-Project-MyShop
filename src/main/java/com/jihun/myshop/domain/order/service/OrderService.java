@@ -15,6 +15,7 @@ import com.jihun.myshop.global.common.CustomPageRequest;
 import com.jihun.myshop.global.common.PageResponse;
 import com.jihun.myshop.global.exception.CustomException;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
+import com.jihun.myshop.global.security.service.AuthorizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final AuthorizationService authorizationService;
     private final OrderMapper orderMapper;
 
 
@@ -129,6 +131,19 @@ public class OrderService {
         return PageResponse.fromPage(responsePage);
     }
 
+    public PageResponse<OrderResponseDto> getUserOrdersToAdmin(Long userId, CustomPageRequest pageRequest, CustomUserDetails currentUser) {
+        // 관리자 검사
+        authorizationService.validateAdmin(currentUser);
+
+        User user = getUserById(userId);
+        Pageable pageable = pageRequest.toPageRequest();
+
+        Page<Order> orderPage = orderRepository.findByUser(user, pageable);
+        Page<OrderResponseDto> responsePage = orderPage.map(orderMapper::fromEntity);
+        return PageResponse.fromPage(responsePage);
+    }
+
+
     @Transactional
     public OrderResponseDto updateOrderStatus(Long orderId, OrderStatus orderStatus) {
         Order order = getOrderById(orderId);
@@ -159,7 +174,9 @@ public class OrderService {
         return PageResponse.fromPage(responsePage);
     }
 
-    public PageResponse<OrderResponseDto> getOrdersByStatusToAdmin(List<OrderStatus> statuses, CustomPageRequest pageRequest) {
+    public PageResponse<OrderResponseDto> getOrdersByStatusToAdmin(List<OrderStatus> statuses, CustomPageRequest pageRequest, CustomUserDetails currentUser) {
+        authorizationService.validateAdmin(currentUser);
+
         Pageable pageable = pageRequest.toPageRequest();
 
         Page<Order> orderPage = orderRepository.findByOrderStatusIn(statuses, pageable);
@@ -167,7 +184,8 @@ public class OrderService {
         return PageResponse.fromPage(responsePage);
     }
 
-    public long countOrdersByStatus(OrderStatus status) {
+    public long countOrdersByStatus(OrderStatus status, CustomUserDetails currentUser) {
+        authorizationService.validateAdmin(currentUser);
         return orderRepository.countByOrderStatus(status);
     }
 }

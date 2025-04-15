@@ -6,14 +6,14 @@ import com.jihun.myshop.domain.user.entity.User;
 import com.jihun.myshop.domain.user.entity.mapper.UserMapper;
 import com.jihun.myshop.domain.user.repository.RoleRepository;
 import com.jihun.myshop.domain.user.repository.UserRepository;
+import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.jihun.myshop.domain.user.entity.dto.UserDto.*;
-import static com.jihun.myshop.global.exception.ErrorCode.DUPLICATE_USERNAME;
-import static com.jihun.myshop.global.exception.ErrorCode.ROLE_NOT_FOUND;
+import static com.jihun.myshop.global.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -44,4 +44,6 @@ public class UserService {
         User saveUser = userRepository.save(newUser);
         return userMapper.fromEntity(saveUser);
     }
+
+
 }

@@ -1,4 +1,4 @@
-package com.jihun.myshop.domain.cart.service;
+package com.jihun.myshop.domain.cart.repository;
 
 import com.jihun.myshop.domain.cart.entity.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;

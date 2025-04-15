@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jihun.myshop.domain.user.entity.dto.UserDto;
 import com.jihun.myshop.global.common.ApiResponseEntity;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
+import com.jihun.myshop.global.security.service.AuthorizationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -29,18 +30,17 @@ import static com.jihun.myshop.domain.user.entity.dto.UserDto.*;
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final ObjectMapper objectMapper;
+    private final AuthorizationService authorizationService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 
         // 권한 정보 확인
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-        UserResponse user = principal.getUserResponse();
-        boolean isAdmin = user.isAdmin();
         Map<String, String> data = new HashMap<>();
 
         String redirectUrl;
-        if (isAdmin) {
+        if (authorizationService.isAdmin(principal)) {
             redirectUrl = "/admin/dashboard";
         } else {
             redirectUrl = "/";
