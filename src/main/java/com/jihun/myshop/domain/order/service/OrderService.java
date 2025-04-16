@@ -9,7 +9,7 @@ import com.jihun.myshop.domain.product.entity.Product;
 import com.jihun.myshop.domain.product.repository.ProductRepository;
 import com.jihun.myshop.domain.user.entity.Address;
 import com.jihun.myshop.domain.user.entity.User;
-import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressCreate;
+import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressCreateDto;
 import com.jihun.myshop.domain.user.repository.UserRepository;
 import com.jihun.myshop.global.common.CustomPageRequest;
 import com.jihun.myshop.global.common.PageResponse;
@@ -46,7 +46,7 @@ public class OrderService {
         return productRepository.findById(item.getProductId())
                 .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
     }
-    private Address createAddress(AddressCreate shippingAddress, User user) {
+    private Address createAddress(AddressCreateDto shippingAddress, User user) {
         return Address.builder()
                 .user(user)
                 .recipientName(shippingAddress.getRecipientName())

@@ -3,7 +3,7 @@ package com.jihun.myshop.domain.user.entity.mapper;
 import com.jihun.myshop.domain.user.entity.Address;
 import com.jihun.myshop.domain.user.entity.Role;
 import com.jihun.myshop.domain.user.entity.User;
-import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressResponse;
+import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressResponseDto;
 import org.mapstruct.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -24,16 +24,16 @@ public interface UserMapper {
     @Mapping(target = "reviews", ignore = true)
     @Mapping(target = "wishlistItems", ignore = true)
     @Mapping(target = "userRoles", ignore = true)
-    User fromCreateDto(UserCreate createDto, @Context PasswordEncoder passwordEncoder);
+    User fromCreateDto(UserCreateDto createDto, @Context PasswordEncoder passwordEncoder);
 
     @Mapping(target = "password", constant = "null")
     @Mapping(target = "userRoles", expression = "java(mapRoles(user.getUserRoles()))")
     @Mapping(target = "defaultAddress", expression = "java(findDefaultAddress(user))")
-    UserResponse fromEntity(User user);
+    UserResponseDto fromEntity(User user);
 
     @Mapping(target = "userRoles", expression = "java(mapRoles(user.getUserRoles()))")
     @Mapping(target = "defaultAddress", expression = "java(findDefaultAddress(user))")
-    UserResponse fromEntityIncludePw(User user);
+    UserResponseDto fromEntityIncludePw(User user);
 
 
     // 헬퍼 메서드 인터페이스 선언
@@ -46,7 +46,7 @@ public interface UserMapper {
                 .collect(java.util.stream.Collectors.toSet());
     }
 
-    default AddressResponse findDefaultAddress(User user) {
+    default AddressResponseDto findDefaultAddress(User user) {
         if (user.getAddresses() == null || user.getAddresses().isEmpty()) {
             return null;
         }
@@ -58,12 +58,12 @@ public interface UserMapper {
                 .orElse(null);
     }
 
-    default AddressResponse addressToDto(Address address) {
+    default AddressResponseDto addressToDto(Address address) {
         if (address == null) {
             return null;
         }
 
-        return AddressResponse.builder()
+        return AddressResponseDto.builder()
                 .id(address.getId())
                 .recipientName(address.getRecipientName())
                 .zipCode(address.getZipCode())

@@ -8,7 +8,7 @@ public class AddressDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AddressCreate {
+    public static class AddressCreateDto {
         private String recipientName;
         private String zipCode;
         private String address1;
@@ -21,7 +21,7 @@ public class AddressDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AddressResponse {
+    public static class AddressResponseDto {
         private Long id;
         private String recipientName;
         private String zipCode;

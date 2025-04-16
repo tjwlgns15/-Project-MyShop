@@ -5,7 +5,7 @@ import com.jihun.myshop.domain.user.entity.Role;
 import com.jihun.myshop.domain.user.entity.RoleHierarchy;
 import com.jihun.myshop.domain.user.entity.User;
 import com.jihun.myshop.domain.user.entity.dto.UserDto;
-import com.jihun.myshop.domain.user.entity.dto.UserDto.UserCreate;
+import com.jihun.myshop.domain.user.entity.dto.UserDto.UserCreateDto;
 import com.jihun.myshop.domain.user.entity.mapper.UserMapper;
 import com.jihun.myshop.domain.user.repository.AddressRepository;
 import com.jihun.myshop.domain.user.repository.RoleHierarchyRepository;
@@ -70,8 +70,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     /**
      * UserSignupDto 생성 메서드 - address 필드 제거
      */
-    private UserCreate createSignupDto(String username, String password, String name, String phone) {
-        return UserCreate.builder()
+    private UserCreateDto createSignupDto(String username, String password, String name, String phone) {
+        return UserCreateDto.builder()
                 .username(username)
                 .password(password)
                 .name(name)
@@ -89,7 +89,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         return roleRepository.save(role);
     }
 
-    public User createUserIfNotFound(UserCreate signupDto, Role role) {
+    public User createUserIfNotFound(UserCreateDto signupDto, Role role) {
         // 사용자 이름으로 기존 사용자 검색
         return userRepository.findByUsername(signupDto.getUsername()).orElseGet(() -> {
             // SignupDto를 User 엔티티로 변환 - MapStruct 사용

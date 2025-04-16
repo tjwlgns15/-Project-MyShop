@@ -3,7 +3,6 @@ package com.jihun.myshop.global.security.customUserDetails;
 import com.jihun.myshop.domain.user.entity.Role;
 import com.jihun.myshop.domain.user.entity.User;
 import com.jihun.myshop.domain.user.entity.dto.UserDto;
-import com.jihun.myshop.domain.user.entity.dto.UserDto.UserResponse;
 import com.jihun.myshop.domain.user.entity.mapper.UserMapper;
 import com.jihun.myshop.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
 
         List<GrantedAuthority> authorities = getGrantedAuthorities(user);
-        UserResponse userResponse = userMapper.fromEntityIncludePw(user);
+        UserDto.UserResponseDto userResponse = userMapper.fromEntityIncludePw(user);
 
         return new CustomUserDetails(userResponse, authorities);
     }

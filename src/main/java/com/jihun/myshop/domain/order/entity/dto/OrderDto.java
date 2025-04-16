@@ -3,8 +3,8 @@ package com.jihun.myshop.domain.order.entity.dto;
 import com.jihun.myshop.domain.order.entity.OrderStatus;
 import com.jihun.myshop.domain.order.entity.dto.OrderItemDto.OrderItemCreateDto;
 import com.jihun.myshop.domain.order.entity.dto.OrderItemDto.OrderItemResponseDto;
-import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressCreate;
-import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressResponse;
+import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressCreateDto;
+import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,8 +22,8 @@ public class OrderDto {
     @AllArgsConstructor
     public static class OrderCreateDto {
         private List<OrderItemCreateDto> items;
-        private AddressCreate shippingAddress;
-        private AddressCreate billingAddress;
+        private AddressCreateDto shippingAddress;
+        private AddressCreateDto billingAddress;
         private boolean sameAsBillingAddress;
         private BigDecimal shippingFee;
         private BigDecimal discountAmount;
@@ -52,8 +52,8 @@ public class OrderDto {
         private LocalDateTime shippedAt;
         private LocalDateTime deliveredAt;
 
-        private AddressResponse shippingAddress;
-        private AddressResponse billingAddress;
+        private AddressResponseDto shippingAddress;
+        private AddressResponseDto billingAddress;
 
         private String trackingNumber;
         private String cancelReason;

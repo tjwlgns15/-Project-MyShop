@@ -1,57 +1,62 @@
 package com.jihun.myshop.domain.cart.service;
 
 import com.jihun.myshop.domain.cart.entity.Cart;
+import com.jihun.myshop.domain.cart.entity.CartItem;
 import com.jihun.myshop.domain.cart.entity.dto.CartToOrderDto;
-import com.jihun.myshop.domain.cart.repository.CartRepository;
-import com.jihun.myshop.domain.order.entity.dto.OrderDto;
-import com.jihun.myshop.domain.order.entity.dto.OrderDto.OrderCreateDto;
-import com.jihun.myshop.domain.order.entity.dto.OrderItemDto;
-import com.jihun.myshop.domain.order.entity.dto.OrderItemDto.OrderItemCreateDto;
-import com.jihun.myshop.domain.order.entity.mapper.OrderItemMapper;
-import com.jihun.myshop.domain.order.service.OrderService;
-import com.jihun.myshop.domain.product.entity.Product;
-import com.jihun.myshop.domain.product.repository.ProductRepository;
-import com.jihun.myshop.domain.product.service.ProductService;
+import com.jihun.myshop.domain.cart.entity.dto.CartToOrderDto.CartOrderSelectDto;
+import com.jihun.myshop.domain.cart.validator.CartToOrderValidator;
+import com.jihun.myshop.domain.order.entity.Order;
+import com.jihun.myshop.domain.order.entity.OrderItem;
+import com.jihun.myshop.domain.order.entity.mapper.OrderMapper;
+import com.jihun.myshop.domain.order.repository.OrderRepository;
+import com.jihun.myshop.domain.user.entity.Address;
 import com.jihun.myshop.domain.user.entity.User;
+import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressCreateDto;
 import com.jihun.myshop.domain.user.repository.UserRepository;
-import com.jihun.myshop.domain.user.service.UserService;
 import com.jihun.myshop.global.exception.CustomException;
-import com.jihun.myshop.global.exception.ErrorCode;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.math.BigDecimal;
 
-import static com.jihun.myshop.domain.cart.entity.dto.CartToOrderDto.*;
-import static com.jihun.myshop.domain.order.entity.dto.OrderDto.*;
-import static com.jihun.myshop.global.exception.ErrorCode.*;
+import static com.jihun.myshop.domain.cart.entity.dto.CartToOrderDto.CartOrderDto;
+import static com.jihun.myshop.domain.order.entity.dto.OrderDto.OrderResponseDto;
+import static com.jihun.myshop.global.exception.ErrorCode.USER_NOT_EXIST;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CartToOrderService {
 
-    private final CartRepository cartRepository;
+    private final OrderRepository orderRepository;
     private final UserRepository userRepository;
-    private final OrderService orderService;
-    private final ProductRepository productRepository;
-    private final OrderItemMapper orderItemMapper;
+    private final OrderMapper orderMapper;
+    private final CartToOrderValidator cartToOrderValidator;
+
+    private final CartService cartService;
 
 
-    private User getUserByIdWithCart(Long id) {
-        return userRepository.findByIdWithCart(id)
-                .orElseThrow(() -> new CustomException(USER_NOT_EXIST));
-    }
-    private Product getProductById(Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
-    }
-    private void checkProductStock(Product product, int quantity) {
-        if (product.getStockQuantity() < quantity) {
-            throw new CustomException(OUT_OF_STOCK);
+    private static void applyDiscount(CartOrderDto request, Order order) {
+        if (request.getDiscountAmount() != null && request.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
+            order.applyDiscount(request.getDiscountAmount());
         }
+    }
+    private Address createAddress(AddressCreateDto address, User user) {
+        return Address.builder()
+                .user(user)
+                .recipientName(address.getRecipientName())
+                .zipCode(address.getZipCode())
+                .address1(address.getAddress1())
+                .address2(address.getAddress2())
+                .phone(address.getPhone())
+                .isDefault(address.isDefault())
+                .build();
+    }
+    private User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(USER_NOT_EXIST));
     }
     private Cart getOrCreateCart(User user) {
         Cart cart = user.getCart();
@@ -65,39 +70,80 @@ public class CartToOrderService {
 
 
     @Transactional
-    public OrderResponseDto createOrderFromCart(CustomUserDetails currentUser, CartOrderDto request) {
-        User user = getUserByIdWithCart(currentUser.getId());
+    public OrderResponseDto createOrderFromCart(CartOrderDto request, CustomUserDetails currentUser) {
+        User user = getUserById(currentUser.getId());
         Cart cart = getOrCreateCart(user);
 
-        if (cart.getItems() == null || cart.getItems().isEmpty()) {
-            throw new CustomException(CART_IS_EMPTY);
+        cartToOrderValidator.validateIsEmptyCart(cart);
+
+        Address shippingAddress = createAddress(request.getShippingAddress(), user);
+        Address billingAddress = request.isSameAsBillingAddress() ?
+                shippingAddress : createAddress(request.getBillingAddress(), user);
+
+        Order order = Order.createOrder(
+                user,
+                shippingAddress,
+                billingAddress,
+                request.getShippingFee()
+        );
+
+        for (CartItem cartItem : cart.getItems()) {
+            cartToOrderValidator.checkStockQuantity(cartItem.getProduct().getStockQuantity(), cartItem.getQuantity());
+
+            OrderItem orderItem = OrderItem.createOrderItem(cartItem.getProduct(), cartItem.getQuantity());
+            order.addOrderItem(orderItem);
+
+            cartItem.getProduct().updateStockQuantity(cartItem.getProduct().getStockQuantity() - cartItem.getQuantity());
         }
 
-        List<OrderItemCreateDto> orderItems = cart.getItems().stream()
-                .map(item -> OrderItemCreateDto.builder()
-                        .productId(item.getProduct().getId())
-                        .quantity(item.getQuantity())
-                        .build())
-                .toList();
+        applyDiscount(request, order);
 
-        OrderCreateDto orderCreateDto = OrderCreateDto.builder()
-                .items(orderItems)
-                .shippingAddress(request.getShippingAddress())
-                .billingAddress(request.isSameAsBillingAddress() ? null : request.getBillingAddress())
-                .sameAsBillingAddress(request.isSameAsBillingAddress())
-                .shippingFee(request.getShippingFee())
-                .discountAmount(request.getDiscountAmount())
-                .build();
+        Order savedOrder = orderRepository.save(order);
 
-        OrderResponseDto orderResponse = orderService.createOrder(orderCreateDto, currentUser);
-        cart.clear();
-        cartRepository.save(cart);
+        cartService.clearCart(currentUser);
 
-        return orderResponse;
+        return orderMapper.fromEntity(savedOrder);
     }
 
     @Transactional
-    public OrderResponseDto createOrderFromSelectedCartItems(CustomUserDetails currentUser, CartOrderSelectDto request) {
-        return null;
+    public OrderResponseDto createOrderFromSelectedCartItems(CartOrderSelectDto request, CustomUserDetails currentUser) {
+        User user = getUserById(currentUser.getId());
+        Cart cart = getOrCreateCart(user);
+
+        cartToOrderValidator.validateCartItemIds(request.getCartItemIds());
+
+        Address shippingAddress = createAddress(request.getShippingAddress(), user);
+        Address billingAddress = request.isSameAsBillingAddress() ?
+                shippingAddress : createAddress(request.getBillingAddress(), user);
+
+        Order order = Order.createOrder(
+                user,
+                shippingAddress,
+                billingAddress,
+                request.getShippingFee()
+        );
+
+        for (CartItem cartItem : cart.getItems()) {
+            if (request.getCartItemIds().contains(cartItem.getId())) {
+                cartToOrderValidator.checkStockQuantity(cartItem.getProduct().getStockQuantity(), cartItem.getQuantity());
+
+                OrderItem orderItem = OrderItem.createOrderItem(cartItem.getProduct(), cartItem.getQuantity());
+                order.addOrderItem(orderItem);
+
+                cartItem.getProduct().updateStockQuantity(cartItem.getProduct().getStockQuantity() - cartItem.getQuantity());
+            }
+        }
+
+        if (request.getDiscountAmount() != null && request.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
+            order.applyDiscount(request.getDiscountAmount());
+        }
+
+        Order savedOrder = orderRepository.save(order);
+
+        for (Long cartItemId : request.getCartItemIds()) {
+            cartService.removeCartItem(currentUser, cartItemId);
+        }
+
+        return orderMapper.fromEntity(savedOrder);
     }
 }

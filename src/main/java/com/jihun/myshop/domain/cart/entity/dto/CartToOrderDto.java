@@ -1,7 +1,6 @@
 package com.jihun.myshop.domain.cart.entity.dto;
 
-import com.jihun.myshop.domain.user.entity.dto.AddressDto;
-import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressCreate;
+import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressCreateDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,8 +16,8 @@ public class CartToOrderDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CartOrderDto {
-        private AddressCreate shippingAddress;
-        private AddressCreate billingAddress;
+        private AddressCreateDto shippingAddress;
+        private AddressCreateDto billingAddress;
         private boolean sameAsBillingAddress;
         private BigDecimal shippingFee;
         private BigDecimal discountAmount;
@@ -31,8 +30,8 @@ public class CartToOrderDto {
     @AllArgsConstructor
     public static class CartOrderSelectDto {
         private List<Long> cartItemIds;
-        private AddressCreate shippingAddress;
-        private AddressCreate billingAddress;
+        private AddressCreateDto shippingAddress;
+        private AddressCreateDto billingAddress;
         private boolean sameAsBillingAddress;
         private BigDecimal shippingFee;
         private BigDecimal discountAmount;

@@ -26,8 +26,7 @@ public class CartRestController {
      */
     @PostMapping("/items")
     public ApiResponseEntity<CartResponseDto> addItemToCart(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                                            @RequestBody CartItemCreateDto requestDto) {
-        CartResponseDto cartResponseDto = cartService.addItemToCart(currentUser, requestDto);
+                                                            @RequestBody CartItemCreateDto requestDto) {CartResponseDto cartResponseDto = cartService.addItemToCart(currentUser, requestDto);
         return ApiResponseEntity.success(cartResponseDto);
     }
 

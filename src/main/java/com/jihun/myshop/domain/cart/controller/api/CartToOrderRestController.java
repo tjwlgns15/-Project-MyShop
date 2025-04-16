@@ -27,14 +27,14 @@ public class CartToOrderRestController {
     @PostMapping
     public ApiResponseEntity<OrderResponseDto> createOrderFromCart(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                                    @RequestBody CartOrderDto request) {
-        OrderResponseDto response = cartToOrderService.createOrderFromCart(currentUser, request);
+        OrderResponseDto response = cartToOrderService.createOrderFromCart(request, currentUser);
         return ApiResponseEntity.success(response);
     }
 
     @PostMapping("/selected")
     public ApiResponseEntity<OrderResponseDto> createOrderFromSelectedItems(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                                             @RequestBody CartOrderSelectDto request) {
-        OrderResponseDto response = cartToOrderService.createOrderFromSelectedCartItems(currentUser, request);
+        OrderResponseDto response = cartToOrderService.createOrderFromSelectedCartItems(request, currentUser);
         return ApiResponseEntity.success(response);
     }
 }

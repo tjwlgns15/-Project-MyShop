@@ -6,7 +6,6 @@ import com.jihun.myshop.domain.user.entity.User;
 import com.jihun.myshop.domain.user.entity.mapper.UserMapper;
 import com.jihun.myshop.domain.user.repository.RoleRepository;
 import com.jihun.myshop.domain.user.repository.UserRepository;
-import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ public class UserService {
 
 
     @Transactional
-    public UserResponse createUser(UserCreate dto) {
+    public UserResponseDto createUser(UserCreateDto dto) {
         if (userRepository.existsByUsername(dto.getUsername())) {
             throw new CustomException(DUPLICATE_USERNAME);
         }

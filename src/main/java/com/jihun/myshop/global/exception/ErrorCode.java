@@ -36,6 +36,8 @@ public enum ErrorCode {
     CART_ITEM_NOT_FOUND(404, "카트에서 물품을 찾지 못 했습니다."),
     CART_IS_EMPTY(400, "카트가 비어있습니다."),
     DUPLICATE_CART_ITEM(400, "중복 선택 된 품목이 있습니다."),
+    CART_ITEMS_NOT_SELECTED(400, "선택된 장바구니 아이템이 없습니다"),
+
 
 
 

@@ -1,6 +1,6 @@
 package com.jihun.myshop.domain.user.entity.dto;
 
-import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressResponse;
+import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +14,7 @@ public class UserDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UserCreate {
+    public static class UserCreateDto {
         private String username;
         private String password;
         private String name;
@@ -31,14 +31,14 @@ public class UserDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UserResponse {
+    public static class UserResponseDto {
         private Long id;
         private String username;
         private String password;
         private String name;
         private String phone;
         private Set<String> userRoles;
-        private AddressResponse defaultAddress;
+        private AddressResponseDto defaultAddress;
 //        private List<OrderResponse> orders;
     }
 

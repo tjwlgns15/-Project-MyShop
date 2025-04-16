@@ -2,7 +2,6 @@ package com.jihun.myshop.global.security.filter;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jihun.myshop.domain.user.entity.dto.UserDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpMethod;
@@ -50,7 +49,7 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
             throw new IllegalArgumentException("Authentication method not supported");
         }
 
-        UserResponse userResponse = objectMapper.readValue(request.getReader(), UserResponse.class);
+        UserResponseDto userResponse = objectMapper.readValue(request.getReader(), UserResponseDto.class);
 
         if (!StringUtils.hasText(userResponse.getUsername()) || !StringUtils.hasText(userResponse.getPassword())) {
             throw new AuthenticationServiceException("Username or Password not provided");
