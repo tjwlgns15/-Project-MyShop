@@ -47,24 +47,28 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Role managerRole = createRoleIfNotFound("ROLE_MANAGER", "매니저");
         Role dbaRole = createRoleIfNotFound("ROLE_DBA", "데이터베이스 관리자");
         Role userRole = createRoleIfNotFound("ROLE_USER", "사용자");
+        Role sellerRole = createRoleIfNotFound("ROLE_SELLER", "판매자");
 
         // 사용자 생성
         User admin = createUserIfNotFound(createSignupDto("admin", "1234", "관리자", "01012345678"), adminRole);
         User manager = createUserIfNotFound(createSignupDto("manager", "1234", "매니저", "01012345678"), managerRole);
         User dba = createUserIfNotFound(createSignupDto("dba", "1234", "데이터베이스 관리자", "01012345678"), dbaRole);
         User user = createUserIfNotFound(createSignupDto("user", "1234", "사용자", "01012345678"), userRole);
+        User seller = createUserIfNotFound(createSignupDto("seller", "1234", "판매자", "01012345678"), sellerRole);
 
         // 주소 생성 및 연결
         createDefaultAddressIfNotFound(admin, "관리자", "12345", "대전시 서구", "대덕대로 123", "01012345678");
         createDefaultAddressIfNotFound(manager, "매니저", "12345", "대전시 중구", "대덕대로 456", "01012345678");
         createDefaultAddressIfNotFound(dba, "데이터베이스 관리자", "12345", "대전시 유성구", "대덕대로 789", "01012345678");
         createDefaultAddressIfNotFound(user, "사용자", "12345", "대전시 동구", "대덕대로 101", "01012345678");
+        createDefaultAddressIfNotFound(seller, "판매자", "12345", "대전시 대덕", "대덕대로 202", "01012345678");
 
         // 역할 계층 구조 설정
         RoleHierarchy adminRoleHierarchy = createRoleHierarchyIfNotFound("ROLE_ADMIN", null);
         RoleHierarchy managerRoleHierarchy = createRoleHierarchyIfNotFound("ROLE_MANAGER", adminRoleHierarchy);
         RoleHierarchy dbaRoleHierarchy = createRoleHierarchyIfNotFound("ROLE_DBA", adminRoleHierarchy);
         RoleHierarchy userRoleHierarchy = createRoleHierarchyIfNotFound("ROLE_USER", managerRoleHierarchy);
+        RoleHierarchy sellerRoleHierarchy = createRoleHierarchyIfNotFound("ROLE_SELLER", managerRoleHierarchy);
     }
 
     /**

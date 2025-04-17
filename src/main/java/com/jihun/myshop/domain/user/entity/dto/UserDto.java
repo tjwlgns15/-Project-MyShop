@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 public class UserDto {
@@ -48,7 +49,7 @@ public class UserDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UserUpdateDto {
+    public static class UserInfoUpdateDto {
         private String name;
         private String phone;
     }
@@ -60,6 +61,15 @@ public class UserDto {
     public static class PasswordChangeDto {
         private String currentPassword;
         private String newPassword;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserRoleUpdateDto {
+        private Long userId;
+        private List<String> roleNames;
     }
 
 }

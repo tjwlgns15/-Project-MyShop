@@ -33,7 +33,6 @@ public class AuthorizationService {
     // 상품 수정 권한 확인
     public boolean canModifyProduct(CustomUserDetails userDetails, Product product) {
         return isAdmin(userDetails) ||
-                (product.getSeller() != null &&
-                        product.getSeller().getId().equals(userDetails.getId()));
+                (product.getSeller() != null && product.getSeller().getId().equals(userDetails.getId()));
     }
 }

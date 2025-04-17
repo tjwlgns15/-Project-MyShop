@@ -42,7 +42,7 @@ public class MapBasedUrlRoleMapper implements UrlRoleMapper {
 
         //springdoc
         urlRoleMappings.put("/v3/api-docs/**", "permitAll");
-        urlRoleMappings.put("/wagger-ui/**", "permitAll");
+        urlRoleMappings.put("/swagger-ui/**", "permitAll");
         urlRoleMappings.put("/swagger-ui.html", "permitAll");
 
         return new HashMap<>(urlRoleMappings);

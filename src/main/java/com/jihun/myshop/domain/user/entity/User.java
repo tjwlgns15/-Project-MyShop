@@ -65,6 +65,14 @@ public class User extends BaseTimeEntity {
         this.password = encodedPassword;
     }
 
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updatePhone(String phone) {
+        this.phone = phone;
+    }
+
     public void addRole(Role role) {
         if (this.userRoles == null) {
             this.userRoles = new HashSet<>();
@@ -72,11 +80,11 @@ public class User extends BaseTimeEntity {
         this.userRoles.add(role);
     }
 
-    public void updateName(String name) {
-        this.name = name;
-    }
-
-    public void updatePhone(String phone) {
-        this.phone = phone;
+    public void clearRoles() {
+        if (this.userRoles != null) {
+            this.userRoles.clear();
+        } else {
+            this.userRoles = new HashSet<>();
+        }
     }
 }

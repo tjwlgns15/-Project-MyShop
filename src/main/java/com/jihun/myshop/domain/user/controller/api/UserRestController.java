@@ -1,6 +1,5 @@
 package com.jihun.myshop.domain.user.controller.api;
 
-import com.jihun.myshop.domain.user.entity.dto.UserDto;
 import com.jihun.myshop.domain.user.service.UserService;
 import com.jihun.myshop.global.common.ApiResponseEntity;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
@@ -36,7 +35,7 @@ public class UserRestController {
 
     @PutMapping("/profile")
     public ApiResponseEntity<UserResponseDto> updateProfile(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                                            @RequestBody UserUpdateDto updateDto) {
+                                                            @RequestBody UserInfoUpdateDto updateDto) {
         UserResponseDto userResponse = userService.updateProfile(updateDto, currentUser);
         return ApiResponseEntity.success(userResponse);
     }
