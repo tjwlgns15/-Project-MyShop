@@ -48,7 +48,7 @@ public class ProductDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProductResponse {
+    public static class ProductResponseDto {
         private Long id;
         private String name;
         private String description;

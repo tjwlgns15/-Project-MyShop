@@ -65,7 +65,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse createProduct(ProductCreateDto productCreateDto, CustomUserDetails currentUser) {
+    public ProductResponseDto createProduct(ProductCreateDto productCreateDto, CustomUserDetails currentUser) {
         User user = getUserById(currentUser.getId());
         Category category = getCategoryById(productCreateDto.getCategoryId());
 
@@ -82,35 +82,35 @@ public class ProductService {
         return productMapper.fromEntity(saveProduct);
     }
 
-    public ProductResponse getProduct(Long productId) {
+    public ProductResponseDto getProduct(Long productId) {
         Product product = getProductById(productId);
         return productMapper.fromEntity(product);
     }
 
-    public PageResponse<ProductResponse> getProducts(CustomPageRequest pageRequest) {
+    public PageResponse<ProductResponseDto> getProducts(CustomPageRequest pageRequest) {
         Pageable pageable = pageRequest.toPageRequest();
 
         Page<Product> productPage = productRepository.findByProductStatusIn(
                 List.of(ProductStatus.ACTIVE, ProductStatus.SOLD_OUT), pageable);
 
-        Page<ProductResponse> responsePage = productPage.map(productMapper::fromEntity);
+        Page<ProductResponseDto> responsePage = productPage.map(productMapper::fromEntity);
         return PageResponse.fromPage(responsePage);
     }
 
     // 페이징 적용한 카테고리별 상품 조회
-    public PageResponse<ProductResponse> getProductsByCategory(Long categoryId, CustomPageRequest pageRequest) {
+    public PageResponse<ProductResponseDto> getProductsByCategory(Long categoryId, CustomPageRequest pageRequest) {
         getCategoryById(categoryId);
         Pageable pageable = pageRequest.toPageRequest();
 
         Page<Product> productPage = productRepository.findByCategoryIdAndProductStatusIn(
                 categoryId, List.of(ProductStatus.ACTIVE, ProductStatus.SOLD_OUT), pageable);
 
-        Page<ProductResponse> responsePage = productPage.map(productMapper::fromEntity);
+        Page<ProductResponseDto> responsePage = productPage.map(productMapper::fromEntity);
         return PageResponse.fromPage(responsePage);
     }
 
     // 페이징 적용한 카테고리 및 하위 카테고리 상품 조회
-    public PageResponse<ProductResponse> getProductsByCategoryIncludingSubcategories(Long categoryId, CustomPageRequest pageRequest) {
+    public PageResponse<ProductResponseDto> getProductsByCategoryIncludingSubcategories(Long categoryId, CustomPageRequest pageRequest) {
         Category category = getCategoryById(categoryId);
         List<Long> categoryIds = collectCategoryIds(category);
 
@@ -119,12 +119,12 @@ public class ProductService {
         Page<Product> productPage = productRepository.findByCategoryIdInAndProductStatusIn(
                 categoryIds, List.of(ProductStatus.ACTIVE, ProductStatus.SOLD_OUT), pageable);
 
-        Page<ProductResponse> responsePage = productPage.map(productMapper::fromEntity);
+        Page<ProductResponseDto> responsePage = productPage.map(productMapper::fromEntity);
         return PageResponse.fromPage(responsePage);
     }
 
     @Transactional
-    public ProductResponse updateProduct(Long productId, ProductUpdateDto productUpdateDto, CustomUserDetails userDetails) {
+    public ProductResponseDto updateProduct(Long productId, ProductUpdateDto productUpdateDto, CustomUserDetails userDetails) {
         Product product = getProductById(productId);
 
         // 권한 검증: ADMIN 또는 판매자 본인만 수정 가능
@@ -155,7 +155,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse deleteProduct(Long productId, CustomUserDetails userDetails) {
+    public ProductResponseDto deleteProduct(Long productId, CustomUserDetails userDetails) {
         Product product = getProductById(productId);
 
         // 권한 검증: ADMIN 또는 판매자 본인만 삭제 가능
@@ -167,5 +167,24 @@ public class ProductService {
         product.markAsDeleted();
 
         return productMapper.fromEntity(product);
+    }
+
+    // 판매자의 상품 조회
+    public PageResponse<ProductResponseDto> getSellerProducts(CustomUserDetails currentUser, CustomPageRequest pageRequest) {
+        User seller = getUserById(currentUser.getId());
+        Pageable pageable = pageRequest.toPageRequest();
+
+        Page<Product> productPage = productRepository.findBySellerId(seller.getId(), pageable);
+        Page<ProductResponseDto> responsePage = productPage.map(productMapper::fromEntity);
+        return PageResponse.fromPage(responsePage);
+    }
+
+    public PageResponse<ProductResponseDto> getSellerProductsByStatus(CustomUserDetails currentUser, List<ProductStatus> statuses, CustomPageRequest pageRequest) {
+        User seller = getUserById(currentUser.getId());
+        Pageable pageable = pageRequest.toPageRequest();
+
+        Page<Product> productPage = productRepository.findBySellerIdAndProductStatusIn(seller.getId(), statuses, pageable);
+        Page<ProductResponseDto> responsePage = productPage.map(productMapper::fromEntity);
+        return PageResponse.fromPage(responsePage);
     }
 }

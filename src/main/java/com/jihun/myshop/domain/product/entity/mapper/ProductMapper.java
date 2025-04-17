@@ -3,7 +3,8 @@ package com.jihun.myshop.domain.product.entity.mapper;
 import com.jihun.myshop.domain.product.entity.Category;
 import com.jihun.myshop.domain.product.entity.Product;
 import com.jihun.myshop.domain.product.entity.ProductStatus;
-import com.jihun.myshop.domain.product.entity.dto.ProductDto.ProductResponse;
+import com.jihun.myshop.domain.product.entity.dto.ProductDto;
+import com.jihun.myshop.domain.product.entity.dto.ProductDto.ProductResponseDto;
 import com.jihun.myshop.domain.user.entity.User;
 import org.mapstruct.*;
 
@@ -20,7 +21,7 @@ public interface ProductMapper {
     @Mapping(target = "categoryId", source = "category.id")
     @Mapping(target = "sellerName", source = "seller.name")
     @Mapping(target = "sellerId", source = "seller.id")
-    ProductResponse fromEntity(Product entity);
+    ProductResponseDto fromEntity(Product entity);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "category", source = "category")
