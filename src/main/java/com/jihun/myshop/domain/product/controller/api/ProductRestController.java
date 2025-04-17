@@ -19,29 +19,29 @@ public class ProductRestController {
     private final ProductService productService;
 
     @PostMapping("new")
-    public ApiResponseEntity<ProductResponse> createProduct(@RequestBody ProductCreateDto productCreateDto,
-                                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        ProductResponse response = productService.createProduct(productCreateDto, userDetails);
+    public ApiResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductCreateDto productCreateDto,
+                                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+        ProductResponseDto response = productService.createProduct(productCreateDto, userDetails);
         return ApiResponseEntity.success(response);
     }
 
     @GetMapping("/{productId}")
-    public ApiResponseEntity<ProductResponse> getProduct(@PathVariable Long productId) {
-        ProductResponse response = productService.getProduct(productId);
+    public ApiResponseEntity<ProductResponseDto> getProduct(@PathVariable Long productId) {
+        ProductResponseDto response = productService.getProduct(productId);
         return ApiResponseEntity.success(response);
     }
 
     @GetMapping
-    public ApiResponseEntity<PageResponse<ProductResponse>> getProducts(CustomPageRequest pageRequest) {
-        PageResponse<ProductResponse> responses = productService.getProducts(pageRequest);
+    public ApiResponseEntity<PageResponse<ProductResponseDto>> getProducts(CustomPageRequest pageRequest) {
+        PageResponse<ProductResponseDto> responses = productService.getProducts(pageRequest);
         return ApiResponseEntity.success(responses);
     }
 
     @GetMapping("/category/{categoryId}")
-    public ApiResponseEntity<PageResponse<ProductResponse>> getProductsByCategory(@PathVariable Long categoryId,
-                                                                                  @RequestParam(required = false, defaultValue = "false") boolean includeSubcategories,
-                                                                                  CustomPageRequest pageRequest) {
-        PageResponse<ProductResponse> responses;
+    public ApiResponseEntity<PageResponse<ProductResponseDto>> getProductsByCategory(@PathVariable Long categoryId,
+                                                                                     @RequestParam(required = false, defaultValue = "false") boolean includeSubcategories,
+                                                                                     CustomPageRequest pageRequest) {
+        PageResponse<ProductResponseDto> responses;
         if (includeSubcategories) {
             responses = productService.getProductsByCategoryIncludingSubcategories(categoryId, pageRequest);
         } else {
@@ -52,19 +52,17 @@ public class ProductRestController {
     }
 
     @PutMapping("/{productId}")
-    public ApiResponseEntity<ProductResponse> updateProduct(@PathVariable Long productId,
-                                                            @RequestBody ProductUpdateDto productUpdateDto,
-                                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        // 사용자 권한은 서비스 레이어에서 검증
-        ProductResponse response = productService.updateProduct(productId, productUpdateDto, userDetails);
+    public ApiResponseEntity<ProductResponseDto> updateProduct(@PathVariable Long productId,
+                                                               @RequestBody ProductUpdateDto productUpdateDto,
+                                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+        ProductResponseDto response = productService.updateProduct(productId, productUpdateDto, userDetails);
         return ApiResponseEntity.success(response);
     }
 
     @DeleteMapping("/{productId}")
-    public ApiResponseEntity<ProductResponse> deleteProduct(@PathVariable Long productId,
-                                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        // 사용자 권한은 서비스 레이어에서 검증
-        ProductResponse response = productService.deleteProduct(productId, userDetails);
+    public ApiResponseEntity<ProductResponseDto> deleteProduct(@PathVariable Long productId,
+                                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+        ProductResponseDto response = productService.deleteProduct(productId, userDetails);
         return ApiResponseEntity.success(response);
     }
 

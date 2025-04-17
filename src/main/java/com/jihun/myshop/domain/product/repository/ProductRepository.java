@@ -23,4 +23,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // 단일 상품 조회 시 페치 조인
     @Query("SELECT p FROM Product p JOIN FETCH p.category JOIN FETCH p.seller WHERE p.id = :productId")
     Optional<Product> findByIdWithCategoryAndSeller(@Param("productId") Long productId);
+
+    // 판매자 상품 조회
+    Page<Product> findBySellerId(Long sellerId, Pageable pageable);
+    Page<Product> findBySellerIdAndProductStatusIn(Long sellerId, List<ProductStatus> statuses, Pageable pageable);
 }
