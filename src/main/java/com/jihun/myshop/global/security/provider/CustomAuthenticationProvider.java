@@ -31,7 +31,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("비밀번호 인증에 실패하였습니다.");
         }
 
-        log.info("[로그인 성공] {}", username);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 

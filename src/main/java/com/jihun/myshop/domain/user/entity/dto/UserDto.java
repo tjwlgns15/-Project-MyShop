@@ -39,7 +39,27 @@ public class UserDto {
         private String phone;
         private Set<String> userRoles;
         private AddressResponseDto defaultAddress;
-//        private List<OrderResponse> orders;
+//        private List<OrderResponseDto> orders;
+//        private CartResponseDto cart;
+//        private List<ReviewResponseDto> reviews;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserUpdateDto {
+        private String name;
+        private String phone;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PasswordChangeDto {
+        private String currentPassword;
+        private String newPassword;
     }
 
 }

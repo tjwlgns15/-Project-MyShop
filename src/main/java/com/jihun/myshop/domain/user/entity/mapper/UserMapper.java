@@ -1,5 +1,6 @@
 package com.jihun.myshop.domain.user.entity.mapper;
 
+import com.jihun.myshop.domain.order.entity.mapper.OrderMapper;
 import com.jihun.myshop.domain.user.entity.Address;
 import com.jihun.myshop.domain.user.entity.Role;
 import com.jihun.myshop.domain.user.entity.User;
@@ -11,7 +12,7 @@ import java.util.Set;
 
 import static com.jihun.myshop.domain.user.entity.dto.UserDto.*;
 
-@Mapper(componentModel = "spring", uses = {AddressMapper.class})
+@Mapper(componentModel = "spring", uses = {AddressMapper.class, OrderMapper.class})
 public interface UserMapper {
 
     @Mapping(target = "username", source = "createDto.username")

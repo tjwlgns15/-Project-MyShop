@@ -32,3 +32,8 @@
 
 ## cart to order
     - 장바구니 전체, 선택 상품 주문으로 변경
+
+## profile, logging
+    - 프로필, 유저 정보 수정 기능 추가
+    - AOP 활용하여 로깅
+    - logback-spring.xml 추가하여 단계별 로그 파일 작성

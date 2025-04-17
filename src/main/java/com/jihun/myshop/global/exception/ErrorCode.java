@@ -11,7 +11,7 @@ public enum ErrorCode {
     // auth
     DUPLICATE_USERNAME(400, "이미 사용중인계정입니다."),
     ROLE_NOT_FOUND(404, "등록되지 않은 권한 정보입니다."),
-    INVALID_CREDENTIALS(401, "아이디 또는 비밀번호가 일치하지 않습니다."),
+    INVALID_CREDENTIALS(401, "비밀번호가 일치하지 않습니다."),
     USER_NOT_EXIST(400, "회원 정보를 찾을 수 없습니다."),
     UNAUTHORIZED_ACCESS(403, "접근 권한이 없습니다."),
     ACCOUNT_DISABLED(401, "비활성화된 계정입니다."),
