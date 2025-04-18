@@ -30,6 +30,7 @@ public enum ErrorCode {
     ORDER_NOT_FOUND(404, "주문 정보를 찾을 수 없습니다."),
     PAYMENT_NOT_FOUND(404, "결제 정보를 찾을 수 없습니다."),
     PAYMENT_ALREADY_EXIST(400, "이미 결제가 생성된 주문입니다."),
+    PAYMENT_AMOUNT_MISMATCH(404, "결제 금액이 일치하지 않습니다."),
 
     // cart
     INVALID_INPUT_VALUE(400, "수량은 1 이상이어야 합니다."),

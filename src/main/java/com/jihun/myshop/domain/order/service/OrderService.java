@@ -38,8 +38,11 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+
     private final AuthorizationService authorizationService;
     private final OrderMapper orderMapper;
+
+    private final PaymentService paymentService;
 
 
     private Product getProductById(OrderItemCreateDto item) {
@@ -133,7 +136,7 @@ public class OrderService {
 
     public PageResponse<OrderResponseDto> getUserOrdersToAdmin(Long userId, CustomPageRequest pageRequest, CustomUserDetails currentUser) {
         // 관리자 검사
-        authorizationService.validateAdmin(currentUser);
+//        authorizationService.validateAdmin(currentUser);
 
         User user = getUserById(userId);
         Pageable pageable = pageRequest.toPageRequest();
@@ -187,5 +190,81 @@ public class OrderService {
     public long countOrdersByStatus(OrderStatus status, CustomUserDetails currentUser) {
         authorizationService.validateAdmin(currentUser);
         return orderRepository.countByOrderStatus(status);
+    }
+
+    /**
+     * 주문 정보 조회 및 주문 금액 검증
+     * - 결제 검증 시 사용
+     */
+    @Transactional(readOnly = true)
+    public OrderResponseDto validateOrderAmount(Long orderId, BigDecimal paymentAmount) {
+        Order order = getOrderById(orderId);
+
+        // 주문 금액 검증
+        if (order.getTotalAmount().compareTo(paymentAmount) != 0) {
+            log.error("결제 금액 불일치: 주문금액={}, 결제금액={}", order.getTotalAmount(), paymentAmount);
+            throw new CustomException(PAYMENT_AMOUNT_MISMATCH);
+        }
+
+        return orderMapper.fromEntity(order);
+    }
+
+    /**
+     * 결제 완료 후 주문 상태 업데이트
+     */
+    @Transactional
+    public OrderResponseDto completeOrderPayment(Long orderId) {
+        Order order = getOrderById(orderId);
+
+        // 이미 결제 완료된 주문인지 확인
+        if (order.getOrderStatus() == OrderStatus.PAID) {
+            log.warn("이미 결제 완료된 주문입니다: orderId={}", orderId);
+            return orderMapper.fromEntity(order);
+        }
+
+        // 주문 상태 결제완료로 업데이트
+        order.updateOrderStatus(OrderStatus.PAID);
+        log.info("주문 결제 완료 처리: orderId={}", orderId);
+
+        return orderMapper.fromEntity(order);
+    }
+
+    /**
+     * 결제 실패/취소 시 주문 상태 업데이트 및 재고 복원
+     */
+    @Transactional
+    public OrderResponseDto rollbackOrderPayment(Long orderId, String reason) {
+        Order order = getOrderById(orderId);
+
+        // 재고 복원 (주문 취소 처리)
+        for (OrderItem item : order.getOrderItems()) {
+            Product product = item.getProduct();
+            product.updateStockQuantity(product.getStockQuantity() + item.getQuantity());
+            log.info("상품 재고 복원: productId={}, quantity={}", product.getId(), item.getQuantity());
+        }
+
+        // 주문 상태 업데이트
+        order.cancelOrder(reason);
+        log.info("주문 취소 처리: orderId={}, reason={}", orderId, reason);
+
+        return orderMapper.fromEntity(order);
+    }
+
+    /**
+     * 결제 완료 후 주문 처리 프로세스
+     * (포트원 웹훅 활용 시 사용)
+     */
+    @Transactional
+    public OrderResponseDto processOrderAfterPayment(String orderNumber, String impUid) {
+        Order order = findOrderByOrderNumber(orderNumber);
+
+        // 주문 상태 업데이트
+        order.updateOrderStatus(OrderStatus.PAID);
+
+        // 결제 정보 업데이트
+        paymentService.processWebhookPaymentComplete(orderNumber, impUid);
+
+        log.info("주문 및 결제 완료 처리: orderNumber={}, impUid={}", orderNumber, impUid);
+        return orderMapper.fromEntity(order);
     }
 }

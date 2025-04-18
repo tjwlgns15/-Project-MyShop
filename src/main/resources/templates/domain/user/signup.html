@@ -1,10 +1,443 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
 <head>
-    <meta charset="UTF-8">
-    <title>SIGNUP</title>
+    <title>회원가입</title>
+    <style>
+        .signup-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .signup-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .signup-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .signup-subtitle {
+            font-size: 16px;
+            color: #666;
+        }
+        .form-section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        .form-label-required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        .form-control:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+        .form-help {
+            font-size: 13px;
+            color: #888;
+            margin-top: 5px;
+        }
+        .form-error {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+        .form-error.show {
+            display: block;
+        }
+        .btn-signup {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: #4a90e2;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .btn-signup:hover {
+            background-color: #3a7bc8;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 15px;
+            color: #666;
+        }
+        .login-link a {
+            color: #4a90e2;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .agreement-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .agreement-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .agreement-checkbox {
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+        .agreement-text {
+            font-size: 14px;
+            flex: 1;
+        }
+        .agreement-link {
+            color: #4a90e2;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .required {
+            color: #e74c3c;
+        }
+    </style>
 </head>
 <body>
+<div layout:fragment="content">
+    <div class="signup-container">
+        <div class="signup-header">
+            <h1 class="signup-title">회원가입</h1>
+            <p class="signup-subtitle">MyShop의 회원이 되어 다양한 혜택을 누려보세요</p>
+        </div>
 
+        <form id="signupForm">
+            <!-- 계정 정보 섹션 -->
+            <div class="form-section">
+                <h2 class="section-title">계정 정보</h2>
+                <div class="form-group">
+                    <label for="username" class="form-label form-label-required">아이디</label>
+                    <input type="text" id="username" name="username" class="form-control" required autocomplete="username">
+                    <p class="form-help">4~20자의 영문, 숫자 조합으로 입력해주세요.</p>
+                    <div class="form-error" id="username-error">유효한 아이디를 입력해주세요.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label form-label-required">비밀번호</label>
+                    <input type="password" id="password" name="password" class="form-control" required autocomplete="new-password">
+                    <p class="form-help">8자 이상, 영문, 숫자, 특수문자를 포함해야 합니다.</p>
+                    <div class="form-error" id="password-error">비밀번호는 8자 이상, 영문, 숫자, 특수문자를 모두 포함해야 합니다.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password-confirm" class="form-label form-label-required">비밀번호 확인</label>
+                    <input type="password" id="password-confirm" name="passwordConfirm" class="form-control" required autocomplete="new-password">
+                    <div class="form-error" id="password-confirm-error">비밀번호가 일치하지 않습니다.</div>
+                </div>
+            </div>
+
+            <!-- 기본 정보 섹션 -->
+            <div class="form-section">
+                <h2 class="section-title">기본 정보</h2>
+                <div class="form-group">
+                    <label for="name" class="form-label form-label-required">이름</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                    <div class="form-error" id="name-error">이름을 입력해주세요.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" class="form-label form-label-required">휴대폰 번호</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" placeholder="010-0000-0000" required>
+                    <div class="form-error" id="phone-error">유효한 휴대폰 번호를 입력해주세요.</div>
+                </div>
+            </div>
+
+            <!-- 배송지 정보 섹션 -->
+            <div class="form-section">
+                <h2 class="section-title">기본 배송지 정보</h2>
+                <div class="form-group">
+                    <label for="recipientName" class="form-label form-label-required">수령인</label>
+                    <input type="text" id="recipientName" name="recipientName" class="form-control" required>
+                    <div class="form-error" id="recipient-name-error">수령인 이름을 입력해주세요.</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="zipCode" class="form-label form-label-required">우편번호</label>
+                        <input type="text" id="zipCode" name="zipCode" class="form-control" readonly required>
+                    </div>
+                    <div class="form-group" style="flex: 0.5;">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="button" class="form-control" onclick="searchAddress()" style="background-color: #f0f0f0; cursor: pointer;">주소 검색</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="address1" class="form-label form-label-required">기본 주소</label>
+                    <input type="text" id="address1" name="address1" class="form-control" readonly required>
+                    <div class="form-error" id="address1-error">주소를 입력해주세요.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="address2" class="form-label form-label-required">상세 주소</label>
+                    <input type="text" id="address2" name="address2" class="form-control" required>
+                    <div class="form-error" id="address2-error">상세 주소를 입력해주세요.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="addressPhone" class="form-label form-label-required">연락처</label>
+                    <input type="tel" id="addressPhone" name="addressPhone" class="form-control" placeholder="010-0000-0000" required>
+                    <div class="form-error" id="address-phone-error">유효한 연락처를 입력해주세요.</div>
+                </div>
+            </div>
+
+            <!-- 약관 동의 섹션 -->
+            <div class="agreement-section">
+                <div class="agreement-item">
+                    <input type="checkbox" id="agreement-all" class="agreement-checkbox" onchange="toggleAllAgreements()">
+                    <div class="agreement-text">
+                        <label for="agreement-all"><strong>전체 동의</strong></label>
+                        <p class="form-help">아래 모든 약관 및 개인정보 수집/이용에 동의합니다.</p>
+                    </div>
+                </div>
+
+                <div class="agreement-item">
+                    <input type="checkbox" id="agreement-terms" class="agreement-checkbox agreement-required" onchange="checkAgreements()">
+                    <div class="agreement-text">
+                        <label for="agreement-terms"><span class="required">[필수]</span> 이용약관 동의</label>
+                        <span class="agreement-link" onclick="showAgreement('terms')">보기</span>
+                    </div>
+                </div>
+
+                <div class="agreement-item">
+                    <input type="checkbox" id="agreement-privacy" class="agreement-checkbox agreement-required" onchange="checkAgreements()">
+                    <div class="agreement-text">
+                        <label for="agreement-privacy"><span class="required">[필수]</span> 개인정보 수집 및 이용 동의</label>
+                        <span class="agreement-link" onclick="showAgreement('privacy')">보기</span>
+                    </div>
+                </div>
+
+                <div class="agreement-item">
+                    <input type="checkbox" id="agreement-marketing" class="agreement-checkbox" onchange="checkAgreements()">
+                    <div class="agreement-text">
+                        <label for="agreement-marketing">[선택] 마케팅 정보 수신 동의</label>
+                        <span class="agreement-link" onclick="showAgreement('marketing')">보기</span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="btn-signup" class="btn-signup" disabled>회원가입</button>
+        </form>
+
+        <div class="login-link">
+            이미 계정이 있으신가요? <a th:href="@{/auth/login}">로그인</a>
+        </div>
+    </div>
+
+    <script>
+        // 다음 우편번호 검색 API
+        function searchAddress() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    document.getElementById('zipCode').value = data.zonecode;
+                    document.getElementById('address1').value = data.address;
+                    document.getElementById('address2').focus();
+                }
+            }).open();
+        }
+
+        // 전체 동의 토글
+        function toggleAllAgreements() {
+            const allChecked = document.getElementById('agreement-all').checked;
+            document.querySelectorAll('.agreement-checkbox').forEach(checkbox => {
+                checkbox.checked = allChecked;
+            });
+            checkAgreements();
+        }
+
+        // 약관 동의 체크
+        function checkAgreements() {
+            const requiredAgreements = document.querySelectorAll('.agreement-required');
+            const allAgreed = Array.from(requiredAgreements).every(checkbox => checkbox.checked);
+
+            document.getElementById('btn-signup').disabled = !allAgreed;
+
+            // 전체 동의 체크박스 상태 업데이트
+            const allCheckboxes = document.querySelectorAll('.agreement-checkbox:not(#agreement-all)');
+            const allChecked = Array.from(allCheckboxes).every(checkbox => checkbox.checked);
+            document.getElementById('agreement-all').checked = allChecked;
+        }
+
+        // 약관 내용 표시
+        function showAgreement(type) {
+            alert(`${type} 약관 내용을 표시합니다. (실제 구현 시 모달로 대체)`);
+        }
+
+        // 폼 검증 및 제출
+        document.getElementById('signupForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let isValid = true;
+
+            // 아이디 검증
+            const username = document.getElementById('username');
+            const usernameError = document.getElementById('username-error');
+            const usernameRegex = /^[a-zA-Z0-9]{4,20}$/;
+            if (!usernameRegex.test(username.value)) {
+                usernameError.classList.add('show');
+                isValid = false;
+            } else {
+                usernameError.classList.remove('show');
+            }
+
+            // 비밀번호 검증
+            const password = document.getElementById('password');
+            const passwordError = document.getElementById('password-error');
+            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+            if (!passwordRegex.test(password.value)) {
+                passwordError.classList.add('show');
+                isValid = false;
+            } else {
+                passwordError.classList.remove('show');
+            }
+
+            // 비밀번호 확인 검증
+            const passwordConfirm = document.getElementById('password-confirm');
+            const passwordConfirmError = document.getElementById('password-confirm-error');
+            if (password.value !== passwordConfirm.value) {
+                passwordConfirmError.classList.add('show');
+                isValid = false;
+            } else {
+                passwordConfirmError.classList.remove('show');
+            }
+
+            // 이름 검증
+            const name = document.getElementById('name');
+            const nameError = document.getElementById('name-error');
+            if (name.value.trim() === '') {
+                nameError.classList.add('show');
+                isValid = false;
+            } else {
+                nameError.classList.remove('show');
+            }
+
+            // 휴대폰 번호 검증
+            const phone = document.getElementById('phone');
+            const phoneError = document.getElementById('phone-error');
+            const phoneRegex = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+            if (!phoneRegex.test(phone.value)) {
+                phoneError.classList.add('show');
+                isValid = false;
+            } else {
+                phoneError.classList.remove('show');
+            }
+
+            // 주소 검증
+            const address1 = document.getElementById('address1');
+            const address1Error = document.getElementById('address1-error');
+            if (address1.value.trim() === '') {
+                address1Error.classList.add('show');
+                isValid = false;
+            } else {
+                address1Error.classList.remove('show');
+            }
+
+            const address2 = document.getElementById('address2');
+            const address2Error = document.getElementById('address2-error');
+            if (address2.value.trim() === '') {
+                address2Error.classList.add('show');
+                isValid = false;
+            } else {
+                address2Error.classList.remove('show');
+            }
+
+            // 모든 검증 통과시 회원가입 API 호출
+            if (isValid) {
+                const formData = {
+                    username: username.value,
+                    password: password.value,
+                    name: name.value,
+                    phone: phone.value,
+                    recipientName: document.getElementById('recipientName').value,
+                    zipCode: document.getElementById('zipCode').value,
+                    address1: address1.value,
+                    address2: address2.value,
+                    addressPhone: document.getElementById('addressPhone').value
+                };
+
+                submitSignup(formData);
+            }
+        });
+
+        // 회원가입 API 호출
+        function submitSignup(formData) {
+            fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
+                        window.location.href = '/auth/login';
+                    } else {
+                        alert('회원가입에 실패했습니다: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('회원가입 중 오류가 발생했습니다.');
+                });
+        }
+    </script>
+
+    <!-- 다음 우편번호 API -->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</div>
 </body>
 </html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>결제 완료</title>
+    <style>
+        .complete-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .complete-icon {
+            font-size: 80px;
+            color: #0066cc;
+            margin-bottom: 20px;
+        }
+        .complete-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .complete-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+        .order-info {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: left;
+            border: 1px solid #eee;
+        }
+        .info-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .info-label {
+            color: #555;
+            font-weight: 500;
+        }
+        .info-value {
+            font-weight: bold;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            font-size: 18px;
+        }
+        .total-label {
+            font-weight: bold;
+            color: #333;
+        }
+        .total-value {
+            font-weight: bold;
+            color: #0066cc;
+        }
+        .btn-container {
+            margin-top: 30px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0055b3;
+        }
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        .btn-secondary:hover {
+            background-color: #e5e5e5;
+        }
+        .payment-notice {
+            font-size: 14px;
+            color: #888;
+            text-align: center;
+            margin-top: 30px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="complete-container">
+        <div class="complete-icon">✓</div>
+        <h1 class="complete-title">결제가 완료되었습니다!</h1>
+        <p class="complete-message">주문이 성공적으로 접수되었습니다. 주문 내역은 아래에서 확인하실 수 있습니다.</p>
+
+        <!-- 주문 정보 -->
+        <div class="order-info">
+            <h2 class="info-title">주문 정보</h2>
+            <div class="info-row">
+                <div class="info-label">주문번호</div>
+                <div class="info-value" th:text="${order.orderNumber}">ORD12345</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">주문일시</div>
+                <div class="info-value" th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}">
+                    2023-04-18 14:30
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">주문상품</div>
+                <div class="info-value" th:text="${order.orderItems.size() + '개 상품'}">3개 상품</div>
+            </div>
+        </div>
+
+        <!-- 결제 정보 -->
+        <div class="order-info">
+            <h2 class="info-title">결제 정보</h2>
+            <div class="info-row">
+                <div class="info-label">결제방법</div>
+                <div class="info-value" th:text="${payment.paymentMethodDescription}">신용카드</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">결제일시</div>
+                <div class="info-value" th:text="${#temporals.format(payment.paidAt, 'yyyy-MM-dd HH:mm')}">
+                    2023-04-18 14:35
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">상품금액</div>
+                <div class="info-value" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + '원'}">
+                    30,000원
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">배송비</div>
+                <div class="info-value" th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT') + '원'}">
+                    3,000원
+                </div>
+            </div>
+            <div class="info-row" th:if="${order.discountAmount != null && order.discountAmount > 0}">
+                <div class="info-label">할인금액</div>
+                <div class="info-value" th:text="${'-' + #numbers.formatDecimal(order.discountAmount, 0, 'COMMA', 0, 'POINT') + '원'}">
+                    -5,000원
+                </div>
+            </div>
+            <div class="total-row">
+                <div class="total-label">최종 결제 금액</div>
+                <div class="total-value" th:text="${#numbers.formatDecimal(order.finalAmount, 0, 'COMMA', 0, 'POINT') + '원'}">
+                    28,000원
+                </div>
+            </div>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="btn-container">
+            <a th:href="@{'/orders/' + ${order.id}}" class="btn btn-primary">주문 상세보기</a>
+            <a th:href="@{/orders}" class="btn btn-secondary">주문 목록</a>
+        </div>
+
+        <p class="payment-notice">
+            결제 내역은 이메일로도 발송됩니다.<br>
+            배송이 시작되면 알림 메시지가 발송됩니다.
+        </p>
+    </div>
+</div>
+</body>
+</html>

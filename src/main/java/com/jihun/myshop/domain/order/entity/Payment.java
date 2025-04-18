@@ -22,6 +22,9 @@ public class Payment extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String merchantUid;
+    private String impUid;
+
     @OneToOne
     @JoinColumn(name = "order_id")
     private Order order;
@@ -33,7 +36,6 @@ public class Payment extends BaseTimeEntity {
     private PaymentStatus paymentStatus;
 
     private BigDecimal amount;
-    private String paymentKey;
     private LocalDateTime paidAt;
     private String failReason;
 
@@ -46,9 +48,10 @@ public class Payment extends BaseTimeEntity {
                 .build();
     }
 
-    public void markAsCompleted(String paymentKey) {
+    public void markAsCompleted(String merchantUid, String impUid) {
+        this.merchantUid = merchantUid;
+        this.impUid = impUid;
         this.paymentStatus = PaymentStatus.COMPLETED;
-        this.paymentKey = paymentKey;
         this.paidAt = LocalDateTime.now();
 
         if (order != null) {

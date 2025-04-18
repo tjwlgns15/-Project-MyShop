@@ -43,7 +43,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         if (authorizationService.isAdmin(principal)) {
             redirectUrl = "/admin/dashboard";
         } else {
-            redirectUrl = "/";
+            redirectUrl = "/orders";
         }
         data.put("redirectUrl", redirectUrl);
 

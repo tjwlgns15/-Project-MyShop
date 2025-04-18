@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>결제 대기 주문</title>
+    <style>
+        .order-list-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .order-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .order-list-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .order-filter-tabs {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .order-filter-tabs a {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-right: 5px;
+            text-decoration: none;
+            color: #555;
+            border: 1px solid transparent;
+        }
+        .order-filter-tabs a.active {
+            border: 1px solid #ddd;
+            border-bottom: 1px solid white;
+            border-radius: 4px 4px 0 0;
+            color: #0066cc;
+            font-weight: bold;
+            margin-bottom: -1px;
+        }
+        .order-item {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+        .order-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .order-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .order-date {
+            color: #666;
+            font-size: 14px;
+        }
+        .order-number {
+            font-weight: bold;
+        }
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #fcf3d7;
+            color: #b68d06;
+        }
+        .order-summary {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .order-products {
+            flex: 1;
+        }
+        .order-total {
+            text-align: right;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .order-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .btn-primary {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .pagination a {
+            padding: 8px 12px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #333;
+            border-radius: 4px;
+        }
+        .pagination a.active {
+            background-color: #0066cc;
+            color: white;
+            border-color: #0066cc;
+        }
+        .no-orders {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .payment-alert {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="order-list-container">
+        <div class="order-list-header">
+            <h1 class="order-list-title">결제 대기 주문</h1>
+        </div>
+
+        <div class="order-filter-tabs">
+            <a th:href="@{/orders}">전체</a>
+            <a th:href="@{/orders/payment-pending}" class="active">결제 대기</a>
+            <a th:href="@{/orders/my/PAID}">결제 완료</a>
+            <a th:href="@{/orders/my/PREPARING}">상품 준비중</a>
+            <a th:href="@{/orders/my/SHIPPED}">배송중</a>
+            <a th:href="@{/orders/my/DELIVERED}">배송 완료</a>
+            <a th:href="@{/orders/my/CANCELED}">취소</a>
+        </div>
+
+        <div class="payment-alert">
+            <p>결제 대기 중인 주문은 24시간 이내에 결제해야 합니다. 기간 내 결제되지 않은 주문은 자동으로 취소됩니다.</p>
+        </div>
+
+        <div th:if="${orderList.content.isEmpty()}" class="no-orders">
+            <p>결제 대기 중인 주문이 없습니다.</p>
+        </div>
+
+        <div th:unless="${orderList.content.isEmpty()}">
+            <div class="order-list">
+                <div class="order-item" th:each="order : ${orderList.content}">
+                    <div class="order-item-header">
+                        <div>
+                            <span class="order-date" th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}">2023-04-18 14:30</span>
+                            <span class="order-number" th:text="'주문번호: ' + ${order.orderNumber}">주문번호: ORD12345</span>
+                        </div>
+                        <div>
+                            <span class="order-status" th:text="${order.orderStatusDescription}">결제 대기중</span>
+                        </div>
+                    </div>
+
+                    <div class="order-summary">
+                        <div class="order-products">
+                            <p th:text="${order.orderItems.size() + '개 상품'}">3개 상품</p>
+                            <p th:text="${order.orderItems[0].productName + (order.orderItems.size() > 1 ? ' 외 ' + (order.orderItems.size() - 1) + '개' : '')}">
+                                상품명 외 2개
+                            </p>
+                        </div>
+                        <div class="order-total">
+                            <p th:text="${#numbers.formatDecimal(order.finalAmount, 0, 'COMMA', 0, 'POINT') + '원'}">35,000원</p>
+                        </div>
+                    </div>
+
+                    <div class="order-actions">
+                        <a th:href="@{'/orders/' + ${order.id}}" class="btn-secondary">주문 상세</a>
+                        <a th:href="@{'/orders/' + ${order.id} + '/payment'}" class="btn-primary">결제하기</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 페이지네이션 -->
+            <div class="pagination" th:if="${orderList.totalPages > 1}">
+                <a th:href="@{/orders/payment-pending(page=0, size=${orderList.size})}"
+                   th:class="${orderList.number == 0 ? 'active' : ''}">1</a>
+
+                <a th:each="pageNumber : ${#numbers.sequence(1, orderList.totalPages - 1)}"
+                   th:href="@{/orders/payment-pending(page=${pageNumber}, size=${orderList.size})}"
+                   th:text="${pageNumber + 1}"
+                   th:class="${pageNumber == orderList.number ? 'active' : ''}"></a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

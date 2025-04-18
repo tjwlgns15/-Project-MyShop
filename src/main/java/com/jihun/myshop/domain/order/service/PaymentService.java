@@ -3,16 +3,13 @@ package com.jihun.myshop.domain.order.service;
 import com.jihun.myshop.domain.order.entity.Order;
 import com.jihun.myshop.domain.order.entity.Payment;
 import com.jihun.myshop.domain.order.entity.PaymentStatus;
-import com.jihun.myshop.domain.order.entity.dto.PaymentDto;
 import com.jihun.myshop.domain.order.entity.mapper.PaymentMapper;
 import com.jihun.myshop.domain.order.repository.OrderRepository;
 import com.jihun.myshop.domain.order.repository.PaymentRepository;
 import com.jihun.myshop.global.common.CustomPageRequest;
 import com.jihun.myshop.global.common.PageResponse;
 import com.jihun.myshop.global.exception.CustomException;
-import com.jihun.myshop.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -45,8 +42,8 @@ public class PaymentService {
         return paymentRepository.findByOrder(order)
                 .orElseThrow(() -> new CustomException(PAYMENT_NOT_FOUND));
     }
-    private Payment findPaymentByPaymentKey(String paymentKey) {
-        return paymentRepository.findByPaymentKey(paymentKey)
+    private Payment findPaymentByMerchantUid(String merchantUid) {
+        return paymentRepository.findByMerchantUid(merchantUid)
                 .orElseThrow(() -> new CustomException(PAYMENT_NOT_FOUND));
     }
 
@@ -77,15 +74,15 @@ public class PaymentService {
         return paymentMapper.fromEntity(payment);
     }
 
-    public PaymentResponseDto getPaymentByPaymentKey(String paymentKey) {
-        Payment payment = findPaymentByPaymentKey(paymentKey);
+    public PaymentResponseDto getPaymentByMerchantUid(String merchantUid) {
+        Payment payment = findPaymentByMerchantUid(merchantUid);
         return paymentMapper.fromEntity(payment);
     }
 
     @Transactional
-    public PaymentResponseDto completePayment(Long paymentId, String paymentKey) {
+    public PaymentResponseDto completePayment(Long paymentId, String merchantUid, String impUid) {
         Payment payment = getPaymentById(paymentId);
-        payment.markAsCompleted(paymentKey);
+        payment.markAsCompleted(merchantUid, impUid);
         return paymentMapper.fromEntity(payment);
     }
 
@@ -121,5 +118,27 @@ public class PaymentService {
 
     public long countPaymentsByStatus(PaymentStatus status) {
         return paymentRepository.countByPaymentStatus(status);
+    }
+
+    @Transactional
+    public PaymentResponseDto processWebhookPaymentComplete(String merchantUid, String impUid) {
+        // merchantUid를 paymentKey로 사용한다고 가정
+        Payment payment = findPaymentByMerchantUid(merchantUid);
+        payment.markAsCompleted(merchantUid, impUid);
+        return paymentMapper.fromEntity(payment);
+    }
+
+    @Transactional
+    public PaymentResponseDto processWebhookPaymentCancel(String merchantUid, String reason) {
+        Payment payment = findPaymentByMerchantUid(merchantUid);
+        payment.markAsCanceled(reason);
+        return paymentMapper.fromEntity(payment);
+    }
+
+    @Transactional
+    public PaymentResponseDto processWebhookPaymentFail(String merchantUid, String reason) {
+        Payment payment = findPaymentByMerchantUid(merchantUid);
+        payment.markAsFailed(reason);
+        return paymentMapper.fromEntity(payment);
     }
 }

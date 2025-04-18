@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>결제하기</title>
+  <!-- 포트원 결제 라이브러리 -->
+  <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+  <style>
+    .payment-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .payment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .order-summary {
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .summary-label {
+      color: #555;
+    }
+    .summary-value {
+      font-weight: bold;
+      text-align: right;
+    }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #ddd;
+      font-size: 18px;
+    }
+    .total-label {
+      font-weight: bold;
+    }
+    .total-value {
+      font-weight: bold;
+      color: #0066cc;
+    }
+    .payment-methods {
+      margin-bottom: 30px;
+    }
+    .payment-method {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .payment-method:hover, .payment-method.active {
+      border-color: #0066cc;
+      background-color: #f0f7ff;
+    }
+    .payment-method-radio {
+      margin-right: 15px;
+    }
+    .payment-method-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+    }
+    .payment-method-name {
+      font-weight: bold;
+    }
+    .payment-agreement {
+      margin-bottom: 30px;
+    }
+    .agreement-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .agreement-checkbox {
+      margin-right: 10px;
+    }
+    .agreement-text {
+      font-size: 14px;
+    }
+    .required {
+      color: #ff3b30;
+    }
+    .payment-button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .payment-button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .cancel-button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background-color: #f0f0f0;
+      color: #333;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+    }
+    .payment-notice {
+      font-size: 13px;
+      color: #888;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="payment-container">
+    <div class="payment-header">
+      <h1 class="page-title">결제하기</h1>
+    </div>
+
+    <!-- 주문 요약 정보 -->
+    <section class="order-summary">
+      <h2 class="section-title">주문 정보</h2>
+      <div class="summary-row">
+        <div class="summary-label">주문번호</div>
+        <div class="summary-value" th:text="${order.orderNumber}">ORD12345</div>
+      </div>
+      <div class="summary-row">
+        <div class="summary-label">상품 금액</div>
+        <div class="summary-value" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + '원'}">30,000원</div>
+      </div>
+      <div class="summary-row">
+        <div class="summary-label">배송비</div>
+        <div class="summary-value" th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT') + '원'}">3,000원</div>
+      </div>
+      <div class="summary-row" th:if="${order.discountAmount != null && order.discountAmount > 0}">
+        <div class="summary-label">할인 금액</div>
+        <div class="summary-value" th:text="${'-' + #numbers.formatDecimal(order.discountAmount, 0, 'COMMA', 0, 'POINT') + '원'}">-5,000원</div>
+      </div>
+      <div class="total-row">
+        <div class="total-label">총 결제 금액</div>
+        <div class="total-value" th:text="${#numbers.formatDecimal(order.finalAmount, 0, 'COMMA', 0, 'POINT') + '원'}">28,000원</div>
+      </div>
+    </section>
+
+    <!-- 결제 수단 선택 -->
+    <section class="payment-methods">
+      <h2 class="section-title">결제 수단 선택</h2>
+      <div class="payment-method active" data-method="card" onclick="selectPaymentMethod('card', this)">
+        <input type="radio" name="paymentMethod" id="method-card" class="payment-method-radio" value="card" checked>
+        <span class="payment-method-icon">💳</span>
+        <label for="method-card" class="payment-method-name">신용카드</label>
+      </div>
+      <div class="payment-method" data-method="trans" onclick="selectPaymentMethod('trans', this)">
+        <input type="radio" name="paymentMethod" id="method-trans" class="payment-method-radio" value="trans">
+        <span class="payment-method-icon">🏦</span>
+        <label for="method-trans" class="payment-method-name">실시간 계좌이체</label>
+      </div>
+      <div class="payment-method" data-method="vbank" onclick="selectPaymentMethod('vbank', this)">
+        <input type="radio" name="paymentMethod" id="method-vbank" class="payment-method-radio" value="vbank">
+        <span class="payment-method-icon">🏧</span>
+        <label for="method-vbank" class="payment-method-name">가상계좌</label>
+      </div>
+      <div class="payment-method" data-method="phone" onclick="selectPaymentMethod('phone', this)">
+        <input type="radio" name="paymentMethod" id="method-phone" class="payment-method-radio" value="phone">
+        <span class="payment-method-icon">📱</span>
+        <label for="method-phone" class="payment-method-name">휴대폰 결제</label>
+      </div>
+    </section>
+
+    <!-- 약관 동의 -->
+    <section class="payment-agreement">
+      <h2 class="section-title">약관 동의</h2>
+      <div class="agreement-item">
+        <input type="checkbox" id="agreement-all" class="agreement-checkbox" onclick="toggleAllAgreements()">
+        <label for="agreement-all" class="agreement-text"><strong>전체 동의</strong></label>
+      </div>
+      <div class="agreement-item">
+        <input type="checkbox" id="agreement-1" class="agreement-checkbox agreement-required" onchange="checkAgreements()">
+        <label for="agreement-1" class="agreement-text">
+          <span class="required">[필수]</span> 구매 조건 및 결제 진행 동의
+        </label>
+      </div>
+      <div class="agreement-item">
+        <input type="checkbox" id="agreement-2" class="agreement-checkbox agreement-required" onchange="checkAgreements()">
+        <label for="agreement-2" class="agreement-text">
+          <span class="required">[필수]</span> 개인정보 수집 및 이용 동의
+        </label>
+      </div>
+      <div class="agreement-item">
+        <input type="checkbox" id="agreement-3" class="agreement-checkbox agreement-required" onchange="checkAgreements()">
+        <label for="agreement-3" class="agreement-text">
+          <span class="required">[필수]</span> 개인정보 제3자 제공 동의
+        </label>
+      </div>
+    </section>
+
+    <!-- 결제 버튼 -->
+    <button id="payment-button" class="payment-button" disabled onclick="requestPay()">결제하기</button>
+    <a th:href="@{'/orders/' + ${order.id}}" class="cancel-button">취소</a>
+
+    <p class="payment-notice">
+      위 버튼을 클릭하면 결제가 진행됩니다. 결제 진행 중에는 페이지를 닫지 마세요.
+    </p>
+
+    <!-- 히든 필드들 -->
+    <input type="hidden" id="orderId" th:value="${order.id}">
+    <input type="hidden" id="orderNumber" th:value="${order.orderNumber}">
+    <input type="hidden" id="amount" th:value="${order.finalAmount}">
+    <input type="hidden" id="buyerName" th:value="${order.shippingAddress.recipientName}">
+    <input type="hidden" id="buyerTel" th:value="${order.shippingAddress.phone}">
+    <input type="hidden" id="paymentId" th:value="${payment != null ? payment.id : ''}">
+  </div>
+
+  <!-- 결제 스크립트 -->
+  <script th:inline="javascript">
+    let selectedMethod = 'card';
+
+    // 결제 수단 선택
+    function selectPaymentMethod(method, element) {
+      selectedMethod = method;
+      document.querySelector(`#method-${method}`).checked = true;
+
+      // 활성화 클래스 관리
+      document.querySelectorAll('.payment-method').forEach(el => {
+        el.classList.remove('active');
+      });
+      element.classList.add('active');
+    }
+
+    // 약관 전체 동의
+    function toggleAllAgreements() {
+      const allChecked = document.getElementById('agreement-all').checked;
+      document.querySelectorAll('.agreement-checkbox').forEach(checkbox => {
+        checkbox.checked = allChecked;
+      });
+      checkAgreements();
+    }
+
+    // 약관 동의 체크
+    function checkAgreements() {
+      const requiredAgreements = document.querySelectorAll('.agreement-required');
+      const allAgreed = Array.from(requiredAgreements).every(checkbox => checkbox.checked);
+
+      document.getElementById('payment-button').disabled = !allAgreed;
+
+      // 전체 동의 체크박스 상태 업데이트
+      const allCheckboxes = document.querySelectorAll('.agreement-checkbox:not(#agreement-all)');
+      const allChecked = Array.from(allCheckboxes).every(checkbox => checkbox.checked);
+      document.getElementById('agreement-all').checked = allChecked;
+    }
+
+    // 결제 요청
+    function requestPay() {
+      // 주문 정보 가져오기
+      const orderId = document.getElementById('orderId').value;
+      const orderNumber = document.getElementById('orderNumber').value;
+      const amount = document.getElementById('amount').value;
+      const buyerName = document.getElementById('buyerName').value;
+      const buyerEmail = "tjwlgns35@naver.com";
+      const buyerTel = document.getElementById('buyerTel').value;
+      const paymentId = document.getElementById('paymentId').value || null;
+
+      // 결제 수단
+      const payMethod = selectedMethod;
+
+      // 결제 정보가 없을 경우 먼저 생성
+      if (!paymentId) {
+        createPayment(orderId, payMethod)
+                .then(response => {
+                  if (response.success) {
+                    processPay(response.data.id, orderNumber, amount, buyerName, buyerEmail, buyerTel, payMethod, orderId);
+                  } else {
+                    alert('결제 정보 생성에 실패했습니다.');
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  alert('결제 정보 생성 중 오류가 발생했습니다.');
+                });
+      } else {
+        processPay(paymentId, orderNumber, amount, buyerName, buyerEmail, buyerTel, payMethod, orderId);
+      }
+    }
+
+    // 결제 정보 생성
+    function createPayment(orderId, paymentMethod) {
+      return fetch('/api/payments/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          orderId: orderId,
+          paymentMethod: paymentMethod
+        })
+      })
+              .then(response => response.json());
+    }
+
+    // 결제 진행
+    function processPay(paymentId, orderNumber, amount, buyerName, buyerEmail, buyerTel, payMethod, orderId) {
+      // 포트원 객체 초기화
+      const IMP = window.IMP;
+      IMP.init('imp04015531'); // 포트원 가맹점 식별코드로 변경해주세요
+
+      // 결제 요청
+      IMP.request_pay({
+        pg: 'html5_inicis',           // PG사 코드 (계약한 PG사에 맞게 변경)
+        pay_method: payMethod,         // 결제수단
+        merchant_uid: orderNumber,     // 주문번호
+        name: '마이샵 주문 ' + orderNumber, // 주문명
+        amount: amount,                // 결제금액
+        buyer_email: buyerEmail,       // 구매자 이메일
+        buyer_name: buyerName,         // 구매자 이름
+        buyer_tel: buyerTel,           // 구매자 전화번호
+        // m_redirect_url: '/orders/complete?orderId=' + orderId  // 모바일 환경에서 결제 후 리다이렉트될 URL
+      }, function(rsp) {
+        if (rsp.success) {
+          // 결제 성공 시 서버에 결제 검증 요청
+          verifyPayment(rsp, paymentId, amount, orderId);
+        } else {
+          // 결제 실패 시 처리
+          handlePaymentFailure(rsp, paymentId);
+        }
+      });
+    }
+
+    // 결제 검증
+    function verifyPayment(rsp, paymentId, amount, orderId) {
+      fetch(`/api/payments/verify/${rsp.imp_uid}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentId: paymentId,
+          orderId: orderId,
+          merchantUid: rsp.merchant_uid,
+          impUid: rsp.imp_uid,
+          amount: amount
+        })
+      })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  // 결제 성공 처리
+                  alert('결제가 완료되었습니다.');
+                  window.location.href = `/orders/complete?orderId=${orderId}`;
+                } else {
+                  // 결제는 성공했으나 검증 실패 시 (금액 불일치 등)
+                  alert('결제 검증에 실패했습니다: ' + data.message);
+                }
+              })
+              .catch(error => {
+                console.error('결제 검증 오류:', error);
+                alert('결제 처리 중 오류가 발생했습니다.');
+              });
+    }
+
+    // 결제 실패 처리
+    function handlePaymentFailure(rsp, paymentId) {
+      // 서버에 결제 실패 알림
+      fetch(`/api/payments/${paymentId}/fail`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          reason: rsp.error_msg || '사용자 결제 취소'
+        })
+      })
+              .then(response => response.json())
+              .then(data => {
+                console.log('결제 실패 처리 완료:', data);
+              })
+              .catch(error => {
+                console.error('결제 실패 처리 오류:', error);
+              });
+
+      // 사용자에게 메시지 표시
+      alert('결제에 실패했습니다: ' + (rsp.error_msg || '알 수 없는 오류가 발생했습니다.'));
+    }
+  </script>
+</div>
+</body>
+</html>
