@@ -66,6 +66,7 @@ public class PaymentDto {
     @AllArgsConstructor
     public static class PaymentVerifyDto {
         private Long paymentId;
+        private Long orderId;
         private String merchantUid;
         private String impUid;
         private BigDecimal amount;

@@ -48,3 +48,7 @@
 ## payment gateway
     - PG사 연동, 결제 테스트 성공
     - auth, order, payment 관련 임시 HTML 작성
+
+## payment gateway-2
+    - 중복 코드 제거
+    - 취소 실패 시 주문, 상품 정보 변경
