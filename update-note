@@ -52,3 +52,6 @@
 ## payment gateway-2
     - 중복 코드 제거
     - 취소 실패 시 주문, 상품 정보 변경
+
+## review
+    - review CRUD 완료

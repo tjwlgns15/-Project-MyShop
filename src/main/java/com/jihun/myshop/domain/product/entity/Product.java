@@ -92,4 +92,25 @@ public class Product extends BaseTimeEntity {
     public void markAsDeleted() {
         this.productStatus = ProductStatus.DELETED;
     }
+
+    // 리뷰 관련 메서드
+    public void addReview(Review review) {
+        this.reviews.add(review);
+        updateAverageRating();
+    }
+    public void removeReview(Review review) {
+        this.reviews.remove(review);
+        updateAverageRating();
+    }
+    public void updateAverageRating() {
+        this.totalReviews = this.reviews.size();
+        if (this.totalReviews > 0) {
+            double sum = this.reviews.stream()
+                    .mapToInt(Review::getRating)
+                    .sum();
+            this.averageRating = sum / this.totalReviews;
+        } else {
+            this.averageRating = 0.0;
+        }
+    }
 }

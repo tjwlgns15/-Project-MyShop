@@ -39,12 +39,6 @@ public class MapBasedUrlRoleMapper implements UrlRoleMapper {
         urlRoleMappings.put("/admin/**", "ROLE_ADMIN");
         urlRoleMappings.put("/api/admin/**", "ROLE_ADMIN");
 
-
-        //springdoc
-        urlRoleMappings.put("/v3/api-docs/**", "permitAll");
-        urlRoleMappings.put("/swagger-ui/**", "permitAll");
-        urlRoleMappings.put("/swagger-ui.html", "permitAll");
-
         return new HashMap<>(urlRoleMappings);
     }
 }
