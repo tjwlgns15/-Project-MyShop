@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import static com.jihun.myshop.domain.order.entity.OrderStatus.*;
+
 
 @Entity
 @Table(name = "payments")
@@ -22,6 +24,9 @@ public class Payment extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String impUid;  // PG사 고유 결제 번호
+    private String merchantUid;  // 서버측 주문 번호
+
     @OneToOne
     @JoinColumn(name = "order_id")
     private Order order;
@@ -33,7 +38,6 @@ public class Payment extends BaseTimeEntity {
     private PaymentStatus paymentStatus;
 
     private BigDecimal amount;
-    private String paymentKey;
     private LocalDateTime paidAt;
     private String failReason;
 
@@ -46,14 +50,11 @@ public class Payment extends BaseTimeEntity {
                 .build();
     }
 
-    public void markAsCompleted(String paymentKey) {
+    public void markAsCompleted(String merchantUid, String impUid) {
+        this.merchantUid = merchantUid;
+        this.impUid = impUid;
         this.paymentStatus = PaymentStatus.COMPLETED;
-        this.paymentKey = paymentKey;
         this.paidAt = LocalDateTime.now();
-
-        if (order != null) {
-            this.order.updateOrderStatus(OrderStatus.PAID);
-        }
     }
 
     public void markAsFailed(String failReason) {
@@ -64,9 +65,15 @@ public class Payment extends BaseTimeEntity {
     public void markAsCanceled(String reason) {
         this.paymentStatus = PaymentStatus.CANCELED;
         this.failReason = reason;
+    }
 
-        if (order != null) {
-            this.order.updateOrderStatus(OrderStatus.CANCELED);
+    public void updateFromWebhook(String impUid, PaymentStatus status, String reason) {
+        this.impUid = impUid;
+        this.paymentStatus = status;
+        if (status == PaymentStatus.COMPLETED) {
+            this.paidAt = LocalDateTime.now();
+        } else if (status == PaymentStatus.FAILED || status == PaymentStatus.CANCELED) {
+            this.failReason = reason;
         }
     }
 

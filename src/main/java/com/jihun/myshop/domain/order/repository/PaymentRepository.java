@@ -11,14 +11,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Optional<Payment> findByOrder(Order order);
 
-    Optional<Payment> findByPaymentKey(String paymentKey);
+    Optional<Payment> findByMerchantUid(String merchantUid);
 
     Page<Payment> findByPaymentStatusIn(Collection<PaymentStatus> paymentStatuses, Pageable pageable);
 

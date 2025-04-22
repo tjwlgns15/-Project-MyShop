@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>주문 상세</title>
+    <style>
+        .order-detail-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .order-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .order-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .order-number {
+            font-weight: bold;
+        }
+        .order-date {
+            color: #666;
+        }
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .status-payment-pending {
+            background-color: #fcf3d7;
+            color: #b68d06;
+        }
+        .status-paid {
+            background-color: #d7f0e5;
+            color: #0a8a4a;
+        }
+        .status-preparing {
+            background-color: #e6f3ff;
+            color: #0066cc;
+        }
+        .status-shipped {
+            background-color: #e5e5ff;
+            color: #5252a3;
+        }
+        .status-delivered {
+            background-color: #d7d7d7;
+            color: #555;
+        }
+        .status-canceled {
+            background-color: #ffe6e6;
+            color: #cc2929;
+        }
+        .detail-section {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .info-label {
+            width: 150px;
+            font-weight: bold;
+            color: #555;
+        }
+        .info-value {
+            flex: 1;
+        }
+        .order-items {
+            margin-bottom: 30px;
+        }
+        .order-item {
+            display: flex;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .item-image {
+            width: 80px;
+            height: 80px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            margin-right: 15px;
+            overflow: hidden;
+        }
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .item-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .item-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .item-price {
+            color: #666;
+        }
+        .item-quantity {
+            color: #888;
+            font-size: 14px;
+        }
+        .item-total {
+            text-align: right;
+            font-weight: bold;
+        }
+        .order-summary {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .summary-label {
+            color: #555;
+        }
+        .summary-value {
+            font-weight: bold;
+            text-align: right;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            font-size: 18px;
+        }
+        .total-label {
+            font-weight: bold;
+        }
+        .total-value {
+            font-weight: bold;
+            color: #0066cc;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+        }
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        .btn-danger {
+            background-color: #ff3b30;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="order-detail-container">
+        <div class="order-detail-header">
+            <h1 class="page-title">주문 상세</h1>
+            <div>
+                <a th:href="@{/orders}" class="btn btn-secondary">주문 목록</a>
+            </div>
+        </div>
+
+        <div class="order-info">
+            <div>
+                <span class="order-number" th:text="'주문번호: ' + ${order.orderNumber}">주문번호: ORD12345</span>
+                <span class="order-date" th:text="'(' + ${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')} + ')'">
+                    (2023-04-18 14:30)
+                </span>
+            </div>
+            <div>
+                <span class="order-status"
+                      th:classappend="${'status-' + order.orderStatus.toString().toLowerCase()}"
+                      th:text="${order.orderStatusDescription}">결제 대기중</span>
+            </div>
+        </div>
+
+        <!-- 주문 상품 목록 -->
+        <section class="detail-section">
+            <h2 class="section-title">주문 상품</h2>
+            <div class="order-items">
+                <div class="order-item" th:each="item : ${order.orderItems}">
+                    <div class="item-image">
+                        <img th:if="${item.productImageUrl != null}" th:src="${item.productImageUrl}" alt="상품 이미지">
+                        <div th:unless="${item.productImageUrl != null}" style="width: 100%; height: 100%; background-color: #eee;"></div>
+                    </div>
+                    <div class="item-details">
+                        <div>
+                            <div class="item-name" th:text="${item.productName}">상품명</div>
+                            <div class="item-price" th:text="${#numbers.formatDecimal(item.productPrice, 0, 'COMMA', 0, 'POINT') + '원'}">15,000원</div>
+                            <div class="item-quantity" th:text="${'수량: ' + item.quantity + '개'}">수량: 2개</div>
+                        </div>
+                    </div>
+                    <div class="item-total" th:text="${#numbers.formatDecimal(item.finalPrice, 0, 'COMMA', 0, 'POINT') + '원'}">30,000원</div>
+                </div>
+            </div>
+
+            <!-- 주문 금액 요약 -->
+            <div class="order-summary">
+                <div class="summary-row">
+                    <div class="summary-label">상품 금액</div>
+                    <div class="summary-value" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + '원'}">30,000원</div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-label">배송비</div>
+                    <div class="summary-value" th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT') + '원'}">3,000원</div>
+                </div>
+                <div class="summary-row" th:if="${order.discountAmount != null && order.discountAmount > 0}">
+                    <div class="summary-label">할인 금액</div>
+                    <div class="summary-value" th:text="${'-' + #numbers.formatDecimal(order.discountAmount, 0, 'COMMA', 0, 'POINT') + '원'}">-5,000원</div>
+                </div>
+                <div class="total-row">
+                    <div class="total-label">총 결제 금액</div>
+                    <div class="total-value" th:text="${#numbers.formatDecimal(order.finalAmount, 0, 'COMMA', 0, 'POINT') + '원'}">28,000원</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 배송 정보 -->
+        <section class="detail-section">
+            <h2 class="section-title">배송 정보</h2>
+            <div class="info-row">
+                <div class="info-label">받는 사람</div>
+                <div class="info-value" th:text="${order.shippingAddress.recipientName}">홍길동</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">연락처</div>
+                <div class="info-value" th:text="${order.shippingAddress.phone}">010-1234-5678</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">주소</div>
+                <div class="info-value">
+                    <div th:text="${'(' + order.shippingAddress.zipCode + ') ' + order.shippingAddress.address1}">
+                        (12345) 서울시 강남구 테헤란로 123
+                    </div>
+                    <div th:text="${order.shippingAddress.address2}">
+                        456동 789호
+                    </div>
+                </div>
+            </div>
+            <div class="info-row" th:if="${order.trackingNumber != null}">
+                <div class="info-label">송장번호</div>
+                <div class="info-value" th:text="${order.trackingNumber}">123456789</div>
+            </div>
+        </section>
+
+        <!-- 결제 정보 (있을 경우) -->
+        <section class="detail-section" th:if="${order.orderStatus.name() != 'PAYMENT_PENDING'}">
+            <h2 class="section-title">결제 정보</h2>
+            <div class="info-row">
+                <div class="info-label">결제 방법</div>
+                <div class="info-value" th:text="${order.payment != null ? order.payment.paymentMethodDescription : '결제 정보 없음'}">
+                    신용카드
+                </div>
+            </div>
+            <div class="info-row" th:if="${order.paidAt != null}">
+                <div class="info-label">결제 일시</div>
+                <div class="info-value" th:text="${#temporals.format(order.paidAt, 'yyyy-MM-dd HH:mm')}">
+                    2023-04-18 14:35
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">결제 금액</div>
+                <div class="info-value" th:text="${#numbers.formatDecimal(order.finalAmount, 0, 'COMMA', 0, 'POINT') + '원'}">
+                    28,000원
+                </div>
+            </div>
+        </section>
+
+        <!-- 주문 취소 정보 (취소된 경우) -->
+        <section class="detail-section" th:if="${order.orderStatus.name() == 'CANCELED'}">
+            <h2 class="section-title">취소 정보</h2>
+            <div class="info-row">
+                <div class="info-label">취소 사유</div>
+                <div class="info-value" th:text="${order.cancelReason}">
+                    고객 요청에 의한 취소
+                </div>
+            </div>
+        </section>
+
+        <!-- 액션 버튼 -->
+        <div class="action-buttons">
+            <a th:href="@{/orders}" class="btn btn-secondary">주문 목록</a>
+
+            <!-- 결제 대기 상태일 경우 결제하기 버튼 -->
+            <a th:if="${order.orderStatus.name() == 'PAYMENT_PENDING'}"
+               th:href="@{'/orders/' + ${order.id} + '/payment'}"
+               class="btn btn-primary">결제하기</a>
+
+            <!-- 결제 대기 또는 결제 완료 상태일 경우 취소 버튼 -->
+            <a th:if="${order.orderStatus.name() == 'PAYMENT_PENDING' || order.orderStatus.name() == 'PAID'}"
+               href="#"
+               onclick="if(confirm('주문을 취소하시겠습니까?')) { cancelOrder(event, [[${order.id}]]) }"
+               class="btn btn-danger">주문 취소</a>
+        </div>
+    </div>
+
+    <!-- 주문 취소 스크립트 -->
+    <script th:inline="javascript">
+        function cancelOrder(event, orderId) {
+            event.preventDefault();
+
+            fetch(`/api/orders/${orderId}/cancel`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    reason: '고객 요청에 의한 취소'
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('주문이 취소되었습니다.');
+                        window.location.reload();
+                    } else {
+                        alert('주문 취소에 실패했습니다: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('주문 취소 중 오류가 발생했습니다.');
+                });
+        }
+    </script>
+</div>
+</body>
+</html>

@@ -19,4 +19,9 @@ public class AuthViewController {
     public String login() {
         return "domain/user/login";
     }
+
+    @GetMapping("/register-success")
+    public String registerSuccess() {
+        return "domain/user/register-success";
+    }
 }

@@ -34,7 +34,8 @@ public class PaymentDto {
         private PaymentStatus paymentStatus;
         private String paymentStatusDescription;
         private BigDecimal amount;
-        private String paymentKey;
+        private String merchantUid;
+        private String impUid;
         private String failReason;
         private LocalDateTime createdAt;
     }
@@ -45,7 +46,9 @@ public class PaymentDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PaymentCompleteDto {
-        private String paymentKey;
+        private String merchantUid;
+        private String impUid;
+
     }
 
     // 결제 실패/취소 DTO
@@ -55,6 +58,28 @@ public class PaymentDto {
     @AllArgsConstructor
     public static class PaymentCancelDto {
         private String reason;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PaymentVerifyDto {
+        private Long paymentId;
+        private Long orderId;
+        private String merchantUid;
+        private String impUid;
+        private BigDecimal amount;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class WebhookDto {
+        private String imp_uid;
+        private String merchant_uid;
+        private String status;
     }
 
 }
