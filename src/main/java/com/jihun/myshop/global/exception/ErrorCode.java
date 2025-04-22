@@ -25,6 +25,10 @@ public enum ErrorCode {
     OUT_OF_STOCK(400, "재고량이 부족합니다."),
     PRODUCT_NOT_AVAILABLE(400, "현재는 구매할 수 없는 상품입니다."),
 
+    REVIEW_NOT_FOUND(404, "리뷰를 찾을 수 없습니다."),
+    REVIEW_ALREADY_EXISTS(409, "이미 해당 상품에 대한 리뷰를 작성하셨습니다."),
+    REVIEW_NOT_ALLOWED(403, "해당 상품을 구매하지 않아 리뷰를 작성할 수 없습니다."),
+
 
     // order
     ORDER_NOT_FOUND(404, "주문 정보를 찾을 수 없습니다."),

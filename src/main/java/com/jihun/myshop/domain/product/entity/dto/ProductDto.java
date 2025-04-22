@@ -68,36 +68,4 @@ public class ProductDto {
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
     }
-
-    /*public static ProductResponse fromEntity(Product product) {
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .description(product.getDescription())
-                .price(product.getPrice())
-                .discountPrice(product.getDiscountPrice())
-                .discountType(product.getDiscountType())
-                .discountValue(product.getDiscountValue())
-                .stockQuantity(product.getStockQuantity())
-                .mainImageUrl(product.getMainImageUrl())
-                .imageUrls(product.getImages() != null ?
-                        product.getImages().stream()
-                                .map(ProductImage::getImageUrl)
-                                .collect(Collectors.toList()) :
-                        new ArrayList<>())
-                .categoryName(product.getCategory() != null ?
-                        product.getCategory().getName() : null)
-                .categoryId(product.getCategory() != null ?
-                        product.getCategory().getId() : null)
-                .sellerName(product.getSeller() != null ?
-                        product.getSeller().getName() : null)
-                .sellerId(product.getSeller() != null ?
-                        product.getSeller().getId() : null)
-                .productStatus(product.getProductStatus())
-                .averageRating(product.getAverageRating())
-                .totalReviews(product.getTotalReviews())
-                .createdAt(product.getCreatedAt())
-                .updatedAt(product.getUpdatedAt())
-                .build();
-    }*/
 }
