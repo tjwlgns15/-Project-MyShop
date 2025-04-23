@@ -44,6 +44,9 @@ public enum ErrorCode {
     DUPLICATE_CART_ITEM(400, "중복 선택 된 품목이 있습니다."),
     CART_ITEMS_NOT_SELECTED(400, "선택된 장바구니 아이템이 없습니다"),
 
+    // wishlist
+    ALREADY_EXIST_ITEM(404, "이미 위시리스트에 추가된 상품입니다"),
+    NOT_FOUND_ITEM(404, "해당 상품이 위시리스트에 없습니다."),
 
 
 

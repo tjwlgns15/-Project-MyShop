@@ -8,6 +8,7 @@ import com.jihun.myshop.domain.product.entity.ProductStatus;
 import com.jihun.myshop.domain.product.entity.Review;
 import com.jihun.myshop.domain.product.entity.dto.ProductDto;
 import com.jihun.myshop.domain.product.entity.dto.ReviewDto;
+import com.jihun.myshop.domain.product.entity.dto.ReviewDto.SummaryDto;
 import com.jihun.myshop.domain.product.entity.mapper.ReviewMapper;
 import com.jihun.myshop.domain.product.repository.ProductRepository;
 import com.jihun.myshop.domain.product.repository.ReviewRepository;
@@ -140,7 +141,7 @@ public class ReviewService {
         return PageResponse.fromPage(responsePage);
     }
 
-    public ReviewDto.SummaryDto getProductReviewSummary(Long productId) {
+    public SummaryDto getProductReviewSummary(Long productId) {
         Product product = getProductById(productId);
 
         return reviewMapper.toSummaryDto(
