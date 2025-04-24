@@ -3,8 +3,8 @@ package com.jihun.myshop.domain.wishlist.controller.api;
 import com.jihun.myshop.domain.wishlist.entity.dto.WishlistItemDto.WishlistResponseDto;
 import com.jihun.myshop.domain.wishlist.service.WishlistService;
 import com.jihun.myshop.global.common.ApiResponseEntity;
-import com.jihun.myshop.global.common.CustomPageRequest;
-import com.jihun.myshop.global.common.PageResponse;
+import com.jihun.myshop.global.common.dto.CustomPageRequest;
+import com.jihun.myshop.global.common.dto.CustomPageResponse;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,9 +21,9 @@ public class WishlistRestController {
 
 
     @GetMapping
-    public ApiResponseEntity<PageResponse<WishlistResponseDto>> getWishlistItems(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                                                                 CustomPageRequest pageRequest) {
-        PageResponse<WishlistResponseDto> responseDto = wishlistService.getWishlistItems(currentUser, pageRequest);
+    public ApiResponseEntity<CustomPageResponse<WishlistResponseDto>> getWishlistItems(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                                                       CustomPageRequest pageRequest) {
+        CustomPageResponse<WishlistResponseDto> responseDto = wishlistService.getWishlistItems(currentUser, pageRequest);
         return ApiResponseEntity.success(responseDto);
     }
 

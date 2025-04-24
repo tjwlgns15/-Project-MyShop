@@ -6,8 +6,8 @@ import com.jihun.myshop.domain.order.entity.dto.PaymentDto.PaymentCreateDto;
 import com.jihun.myshop.domain.order.entity.dto.PaymentDto.PaymentResponseDto;
 import com.jihun.myshop.domain.order.service.OrderService;
 import com.jihun.myshop.domain.order.service.PaymentService;
-import com.jihun.myshop.global.common.CustomPageRequest;
-import com.jihun.myshop.global.common.PageResponse;
+import com.jihun.myshop.global.common.dto.CustomPageRequest;
+import com.jihun.myshop.global.common.dto.CustomPageResponse;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,7 +33,7 @@ public class OrderViewController {
                          @AuthenticationPrincipal CustomUserDetails currentUser,
                          Model model) {
         // 사용자의 주문 목록 조회
-        PageResponse<OrderResponseDto> orderList = orderService.getUserOrders(currentUser.getId(), pageRequest);
+        CustomPageResponse<OrderResponseDto> orderList = orderService.getUserOrders(currentUser.getId(), pageRequest);
         model.addAttribute("orderList", orderList);
         return "domain/order/order/order-list";
     }
@@ -44,7 +44,7 @@ public class OrderViewController {
                                     @AuthenticationPrincipal CustomUserDetails currentUser,
                                     Model model) {
         // 특정 상태의 주문 목록 조회
-        PageResponse<OrderResponseDto> orderList = orderService.getOrdersByStatusToUser(
+        CustomPageResponse<OrderResponseDto> orderList = orderService.getOrdersByStatusToUser(
                 List.of(status), pageRequest, currentUser);
         model.addAttribute("orderList", orderList);
         model.addAttribute("currentStatus", status.name());
@@ -57,7 +57,7 @@ public class OrderViewController {
                                        @AuthenticationPrincipal CustomUserDetails currentUser,
                                        Model model) {
         // 결제 대기 중인 주문 목록 조회
-        PageResponse<OrderResponseDto> orderList = orderService.getOrdersByStatusToUser(
+        CustomPageResponse<OrderResponseDto> orderList = orderService.getOrdersByStatusToUser(
                 List.of(OrderStatus.PAYMENT_PENDING), pageRequest, currentUser);
         model.addAttribute("orderList", orderList);
         return "domain/order/order/payment-pending";

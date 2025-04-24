@@ -6,13 +6,15 @@ import com.jihun.myshop.domain.user.entity.User;
 import com.jihun.myshop.domain.user.repository.UserRepository;
 import com.jihun.myshop.domain.wishlist.entity.WishlistItem;
 import com.jihun.myshop.domain.wishlist.entity.mapper.WishlistMapper;
+import com.jihun.myshop.domain.wishlist.event.WishlistItemAddedEvent;
 import com.jihun.myshop.domain.wishlist.repository.WishlistRepository;
-import com.jihun.myshop.global.common.CustomPageRequest;
-import com.jihun.myshop.global.common.PageResponse;
+import com.jihun.myshop.global.common.dto.CustomPageRequest;
+import com.jihun.myshop.global.common.dto.CustomPageResponse;
 import com.jihun.myshop.global.exception.CustomException;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,8 @@ public class WishlistService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final WishlistMapper wishlistMapper;
+
+    private final ApplicationEventPublisher eventPublisher;
 
 
     private User getUserById(Long userId) {
@@ -56,14 +60,14 @@ public class WishlistService {
     }
 
 
-    public PageResponse<WishlistResponseDto> getWishlistItems(CustomUserDetails currentUser, CustomPageRequest pageRequest) {
+    public CustomPageResponse<WishlistResponseDto> getWishlistItems(CustomUserDetails currentUser, CustomPageRequest pageRequest) {
         User user = getUserById(currentUser.getId());
         Pageable pageable = pageRequest.toPageRequest();
 
         Page<WishlistItem> wishlistItemPage = wishlistRepository.findByUser(user, pageable);
         Page<WishlistResponseDto> responsePage = wishlistItemPage.map(wishlistMapper::fromEntity);
 
-        return PageResponse.fromPage(responsePage);
+        return CustomPageResponse.fromPage(responsePage);
     }
 
     @Transactional
@@ -75,6 +79,8 @@ public class WishlistService {
 
         WishlistItem wishlistItem = new WishlistItem(user, product);
         WishlistItem savedWishlistItem = wishlistRepository.save(wishlistItem);
+
+        eventPublisher.publishEvent(new WishlistItemAddedEvent(savedWishlistItem));
 
         return wishlistMapper.fromEntity(savedWishlistItem);
     }

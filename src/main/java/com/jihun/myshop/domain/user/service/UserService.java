@@ -1,8 +1,7 @@
 package com.jihun.myshop.domain.user.service;
 
-import com.jihun.myshop.domain.user.entity.dto.UserDto;
-import com.jihun.myshop.global.common.CustomPageRequest;
-import com.jihun.myshop.global.common.PageResponse;
+import com.jihun.myshop.global.common.dto.CustomPageRequest;
+import com.jihun.myshop.global.common.dto.CustomPageResponse;
 import com.jihun.myshop.global.exception.CustomException;
 import com.jihun.myshop.domain.user.entity.Role;
 import com.jihun.myshop.domain.user.entity.User;
@@ -91,13 +90,13 @@ public class UserService {
         return userMapper.fromEntity(user);
     }
 
-    public PageResponse<UserResponseDto> getUsers(CustomPageRequest pageRequest, CustomUserDetails currentUser) {
+    public CustomPageResponse<UserResponseDto> getUsers(CustomPageRequest pageRequest, CustomUserDetails currentUser) {
         authorizationService.validateAdmin(currentUser);
 
         Page<User> allUsers = userRepository.findAllUsers(pageRequest.toPageRequest());
         Page<UserResponseDto> userResponsePage = allUsers.map(userMapper::fromEntity);
 
-        return PageResponse.fromPage(userResponsePage);
+        return CustomPageResponse.fromPage(userResponsePage);
     }
 
     @Transactional

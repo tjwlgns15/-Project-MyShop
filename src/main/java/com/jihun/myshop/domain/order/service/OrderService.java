@@ -4,6 +4,7 @@ import com.jihun.myshop.domain.order.entity.Order;
 import com.jihun.myshop.domain.order.entity.OrderItem;
 import com.jihun.myshop.domain.order.entity.OrderStatus;
 import com.jihun.myshop.domain.order.entity.mapper.OrderMapper;
+import com.jihun.myshop.domain.order.event.OrderCompletedEvent;
 import com.jihun.myshop.domain.order.repository.OrderRepository;
 import com.jihun.myshop.domain.product.entity.Product;
 import com.jihun.myshop.domain.product.repository.ProductRepository;
@@ -11,13 +12,14 @@ import com.jihun.myshop.domain.user.entity.Address;
 import com.jihun.myshop.domain.user.entity.User;
 import com.jihun.myshop.domain.user.entity.dto.AddressDto.AddressCreateDto;
 import com.jihun.myshop.domain.user.repository.UserRepository;
-import com.jihun.myshop.global.common.CustomPageRequest;
-import com.jihun.myshop.global.common.PageResponse;
+import com.jihun.myshop.global.common.dto.CustomPageRequest;
+import com.jihun.myshop.global.common.dto.CustomPageResponse;
 import com.jihun.myshop.global.exception.CustomException;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import com.jihun.myshop.global.security.service.AuthorizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,7 @@ public class OrderService {
 
     private final AuthorizationService authorizationService;
     private final OrderMapper orderMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     private Product getProductById(OrderItemCreateDto item) {
@@ -117,6 +120,8 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
+        eventPublisher.publishEvent(new OrderCompletedEvent(savedOrder));
+
         return orderMapper.fromEntity(savedOrder);
     }
 
@@ -131,16 +136,16 @@ public class OrderService {
         return orderMapper.fromEntity(order);
     }
 
-    public PageResponse<OrderResponseDto> getUserOrders(Long userId, CustomPageRequest pageRequest) {
+    public CustomPageResponse<OrderResponseDto> getUserOrders(Long userId, CustomPageRequest pageRequest) {
         User user = getUserById(userId);
         Pageable pageable = pageRequest.toPageRequest();
 
         Page<Order> orderPage = orderRepository.findByUser(user, pageable);
         Page<OrderResponseDto> responsePage = orderPage.map(orderMapper::fromEntity);
-        return PageResponse.fromPage(responsePage);
+        return CustomPageResponse.fromPage(responsePage);
     }
 
-    public PageResponse<OrderResponseDto> getUserOrdersToAdmin(Long userId, CustomPageRequest pageRequest, CustomUserDetails currentUser) {
+    public CustomPageResponse<OrderResponseDto> getUserOrdersToAdmin(Long userId, CustomPageRequest pageRequest, CustomUserDetails currentUser) {
         // 관리자 검사
         authorizationService.validateAdmin(currentUser);
 
@@ -149,7 +154,7 @@ public class OrderService {
 
         Page<Order> orderPage = orderRepository.findByUser(user, pageable);
         Page<OrderResponseDto> responsePage = orderPage.map(orderMapper::fromEntity);
-        return PageResponse.fromPage(responsePage);
+        return CustomPageResponse.fromPage(responsePage);
     }
 
 
@@ -174,23 +179,23 @@ public class OrderService {
         return orderMapper.fromEntity(order);
     }
 
-    public PageResponse<OrderResponseDto> getOrdersByStatusToUser(List<OrderStatus> statuses, CustomPageRequest pageRequest, CustomUserDetails currentUser) {
+    public CustomPageResponse<OrderResponseDto> getOrdersByStatusToUser(List<OrderStatus> statuses, CustomPageRequest pageRequest, CustomUserDetails currentUser) {
         User user = getUserById(currentUser.getId());
         Pageable pageable = pageRequest.toPageRequest();
 
         Page<Order> orderPage = orderRepository.findByUserAndOrderStatusIn(user, statuses, pageable);
         Page<OrderResponseDto> responsePage = orderPage.map(orderMapper::fromEntity);
-        return PageResponse.fromPage(responsePage);
+        return CustomPageResponse.fromPage(responsePage);
     }
 
-    public PageResponse<OrderResponseDto> getOrdersByStatusToAdmin(List<OrderStatus> statuses, CustomPageRequest pageRequest, CustomUserDetails currentUser) {
+    public CustomPageResponse<OrderResponseDto> getOrdersByStatusToAdmin(List<OrderStatus> statuses, CustomPageRequest pageRequest, CustomUserDetails currentUser) {
         authorizationService.validateAdmin(currentUser);
 
         Pageable pageable = pageRequest.toPageRequest();
 
         Page<Order> orderPage = orderRepository.findByOrderStatusIn(statuses, pageable);
         Page<OrderResponseDto> responsePage = orderPage.map(orderMapper::fromEntity);
-        return PageResponse.fromPage(responsePage);
+        return CustomPageResponse.fromPage(responsePage);
     }
 
     public long countOrdersByStatus(OrderStatus status, CustomUserDetails currentUser) {
@@ -199,19 +204,20 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponseDto completeOrderPayment(Long orderId) {
+    public void completeOrderPayment(Long orderId) {
         Order order = getOrderById(orderId);
 
         // 이미 결제 완료된 주문인지 확인
         if (order.getOrderStatus() == PAID) {
             log.warn("이미 결제 완료된 주문입니다: orderId={}", orderId);
-            return orderMapper.fromEntity(order);
+//            orderMapper.fromEntity(order);
+            return;
         }
 
         order.updateOrderStatus(PAID);
         log.info("주문 결제 완료 처리: orderId={}", orderId);
 
-        return orderMapper.fromEntity(order);
+//        orderMapper.fromEntity(order);
     }
 
     /**

@@ -1,8 +1,7 @@
-package com.jihun.myshop.global.common;
+package com.jihun.myshop.global.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

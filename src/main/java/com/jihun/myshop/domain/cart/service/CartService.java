@@ -1,11 +1,13 @@
 package com.jihun.myshop.domain.cart.service;
 
 import com.jihun.myshop.domain.cart.entity.Cart;
+import com.jihun.myshop.domain.cart.entity.CartItem;
 import com.jihun.myshop.domain.cart.entity.dto.CartDto.CartResponseDto;
 import com.jihun.myshop.domain.cart.entity.dto.CartItemDto;
 import com.jihun.myshop.domain.cart.entity.dto.CartItemDto.CartItemCreateDto;
 import com.jihun.myshop.domain.cart.entity.dto.CartItemDto.CartItemUpdateDto;
 import com.jihun.myshop.domain.cart.entity.mapper.CartMapper;
+import com.jihun.myshop.domain.cart.event.CartItemAddedEvent;
 import com.jihun.myshop.domain.cart.repository.CartRepository;
 import com.jihun.myshop.domain.cart.validator.CartValidator;
 import com.jihun.myshop.domain.product.entity.Product;
@@ -16,6 +18,7 @@ import com.jihun.myshop.global.exception.CustomException;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +34,8 @@ public class CartService {
     private final ProductRepository productRepository;
     private final CartValidator cartValidator;
     private final CartMapper cartMapper;
+
+    private final ApplicationEventPublisher eventPublisher;
 
 
     private User getUserByIdWithCart(Long id) {
@@ -66,8 +71,15 @@ public class CartService {
         Cart cart = getOrCreateCart(user);
 
         cart.addItem(product, requestDto.getQuantity());
-
         cartRepository.save(cart);
+
+        CartItem cartItem = cart.getItems().stream()
+                .filter(item -> item.getProduct().getId().equals(product.getId()))
+                .findFirst()
+                .orElseThrow(() -> new CustomException(CART_ITEM_NOT_FOUND));
+
+        eventPublisher.publishEvent(new CartItemAddedEvent(cart, cartItem));
+
         return cartMapper.fromEntity(cart);
     }
 
