@@ -1,5 +1,6 @@
 package com.jihun.myshop.domain.product.repository;
 
+import com.jihun.myshop.domain.product.entity.Category;
 import com.jihun.myshop.domain.product.entity.Product;
 import com.jihun.myshop.domain.product.entity.ProductStatus;
 import org.springframework.data.domain.Page;
@@ -27,4 +28,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // 판매자 상품 조회
     Page<Product> findBySellerId(Long sellerId, Pageable pageable);
     Page<Product> findBySellerIdAndProductStatusIn(Long sellerId, List<ProductStatus> statuses, Pageable pageable);
+
+    // 추천
+    List<Product> findByCategory(Category category);
+    List<Product> findByCategoryAndIdNot(Category category, Long excludeProductId);
+    @Query("SELECT p FROM Product p ORDER BY p.averageRating DESC LIMIT :limit")
+    List<Product> findTopByOrderByAverageRatingDesc(@Param("limit") int limit);
+
+    Optional<Product> findByName(String name);
 }

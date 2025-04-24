@@ -1,14 +1,12 @@
 package com.jihun.myshop.domain.product.controller.api;
 
-import com.jihun.myshop.domain.product.entity.dto.ProductDto;
-import com.jihun.myshop.domain.product.entity.dto.ReviewDto;
 import com.jihun.myshop.domain.product.entity.dto.ReviewDto.ReviewRequestDto;
 import com.jihun.myshop.domain.product.entity.dto.ReviewDto.ReviewResponseDto;
 import com.jihun.myshop.domain.product.entity.dto.ReviewDto.SummaryDto;
 import com.jihun.myshop.domain.product.service.ReviewService;
 import com.jihun.myshop.global.common.ApiResponseEntity;
-import com.jihun.myshop.global.common.CustomPageRequest;
-import com.jihun.myshop.global.common.PageResponse;
+import com.jihun.myshop.global.common.dto.CustomPageRequest;
+import com.jihun.myshop.global.common.dto.CustomPageResponse;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -53,16 +51,16 @@ public class ReviewRestController {
     }
 
     @GetMapping("/products/{productId}")
-    public ApiResponseEntity<PageResponse<ReviewResponseDto>> getProductReviews(@PathVariable Long productId,
-                                                                                CustomPageRequest pageRequest) {
-        PageResponse<ReviewResponseDto> responseDto = reviewService.getProductReviews(productId, pageRequest);
+    public ApiResponseEntity<CustomPageResponse<ReviewResponseDto>> getProductReviews(@PathVariable Long productId,
+                                                                                      CustomPageRequest pageRequest) {
+        CustomPageResponse<ReviewResponseDto> responseDto = reviewService.getProductReviews(productId, pageRequest);
         return ApiResponseEntity.success(responseDto);
     }
 
     @GetMapping("/me")
-    public ApiResponseEntity<PageResponse<ReviewResponseDto>> getMyReviews(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                                                           CustomPageRequest pageRequest) {
-        PageResponse<ReviewResponseDto> responseDto = reviewService.getUserReviews(currentUser, pageRequest);
+    public ApiResponseEntity<CustomPageResponse<ReviewResponseDto>> getMyReviews(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                                                 CustomPageRequest pageRequest) {
+        CustomPageResponse<ReviewResponseDto> responseDto = reviewService.getUserReviews(currentUser, pageRequest);
         return ApiResponseEntity.success(responseDto);
     }
 

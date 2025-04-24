@@ -6,8 +6,8 @@ import com.jihun.myshop.domain.order.entity.PaymentStatus;
 import com.jihun.myshop.domain.order.entity.mapper.PaymentMapper;
 import com.jihun.myshop.domain.order.repository.OrderRepository;
 import com.jihun.myshop.domain.order.repository.PaymentRepository;
-import com.jihun.myshop.global.common.CustomPageRequest;
-import com.jihun.myshop.global.common.PageResponse;
+import com.jihun.myshop.global.common.dto.CustomPageRequest;
+import com.jihun.myshop.global.common.dto.CustomPageResponse;
 import com.jihun.myshop.global.exception.CustomException;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
@@ -120,20 +120,20 @@ public class PaymentService {
         return paymentMapper.fromEntity(payment);
     }
 
-    public PageResponse<PaymentResponseDto> getPaymentsByStatus(List<PaymentStatus> statuses, CustomPageRequest pageRequest) {
+    public CustomPageResponse<PaymentResponseDto> getPaymentsByStatus(List<PaymentStatus> statuses, CustomPageRequest pageRequest) {
         Pageable pageable = pageRequest.toPageRequest();
 
         Page<Payment> paymentPage = paymentRepository.findByPaymentStatusIn(statuses, pageable);
         Page<PaymentResponseDto> responsePage = paymentPage.map(paymentMapper::fromEntity);
-        return PageResponse.fromPage(responsePage);
+        return CustomPageResponse.fromPage(responsePage);
     }
 
-    public PageResponse<PaymentResponseDto> getPaymentsByUserId(Long userId, CustomPageRequest pageRequest) {
+    public CustomPageResponse<PaymentResponseDto> getPaymentsByUserId(Long userId, CustomPageRequest pageRequest) {
         Pageable pageable = pageRequest.toPageRequest();
 
         Page<Payment> paymentPage = paymentRepository.findByUserId(userId, pageable);
         Page<PaymentResponseDto> responsePage = paymentPage.map(paymentMapper::fromEntity);
-        return PageResponse.fromPage(responsePage);
+        return CustomPageResponse.fromPage(responsePage);
     }
 
     public long countPaymentsByStatus(PaymentStatus status) {

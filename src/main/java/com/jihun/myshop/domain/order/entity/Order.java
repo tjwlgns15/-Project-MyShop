@@ -4,10 +4,7 @@ import com.jihun.myshop.domain.user.entity.Address;
 import com.jihun.myshop.domain.user.entity.User;
 import com.jihun.myshop.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -138,5 +135,9 @@ public class Order extends BaseTimeEntity {
         if (this.orderStatus == OrderStatus.PREPARING) {
             this.updateOrderStatus(OrderStatus.SHIPPED);
         }
+    }
+
+    public void updatePaidAt(LocalDateTime time) {
+        this.paidAt = time;
     }
 }

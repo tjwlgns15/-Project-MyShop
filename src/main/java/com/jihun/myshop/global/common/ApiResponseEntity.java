@@ -27,5 +27,8 @@ public class ApiResponseEntity<T> {
     public static <T> ApiResponseEntity<T> error(ErrorCode errorCode) {
         return new ApiResponseEntity<T>(errorCode.getCode(), errorCode.getMessage(), null);
     }
+    public static <T> ApiResponseEntity<T> error(String message) {
+        return new ApiResponseEntity<T>(500, message, null);
+    }
 
 }

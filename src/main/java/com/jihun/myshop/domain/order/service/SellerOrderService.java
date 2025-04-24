@@ -8,10 +8,9 @@ import com.jihun.myshop.domain.product.entity.Product;
 import com.jihun.myshop.domain.product.repository.ProductRepository;
 import com.jihun.myshop.domain.user.entity.User;
 import com.jihun.myshop.domain.user.repository.UserRepository;
-import com.jihun.myshop.global.common.CustomPageRequest;
-import com.jihun.myshop.global.common.PageResponse;
+import com.jihun.myshop.global.common.dto.CustomPageRequest;
+import com.jihun.myshop.global.common.dto.CustomPageResponse;
 import com.jihun.myshop.global.exception.CustomException;
-import com.jihun.myshop.global.exception.ErrorCode;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import com.jihun.myshop.global.security.service.AuthorizationService;
 import lombok.RequiredArgsConstructor;
@@ -67,7 +66,7 @@ public class SellerOrderService {
         }
     }
 
-    public PageResponse<OrderResponseDto> getOrdersByProduct(Long productId, CustomPageRequest pageRequest, CustomUserDetails currentUser) {
+    public CustomPageResponse<OrderResponseDto> getOrdersByProduct(Long productId, CustomPageRequest pageRequest, CustomUserDetails currentUser) {
         Product product = getProductById(productId);
 
         validateSellerOrderAccess(currentUser, product);
@@ -75,10 +74,10 @@ public class SellerOrderService {
         Pageable pageable = pageRequest.toPageRequest();
         Page<Order> orderPage = orderRepository.findByProductId(productId, pageable);
         Page<OrderResponseDto> responsePage = orderPage.map(orderMapper::fromEntity);
-        return PageResponse.fromPage(responsePage);
+        return CustomPageResponse.fromPage(responsePage);
     }
 
-    public PageResponse<OrderResponseDto> getOrdersByProductAndStatus(Long productId, List<OrderStatus> statuses, CustomPageRequest pageRequest, CustomUserDetails currentUser) {
+    public CustomPageResponse<OrderResponseDto> getOrdersByProductAndStatus(Long productId, List<OrderStatus> statuses, CustomPageRequest pageRequest, CustomUserDetails currentUser) {
         Product product = getProductById(productId);
 
         validateSellerOrderAccess(currentUser, product);
@@ -86,7 +85,7 @@ public class SellerOrderService {
         Pageable pageable = pageRequest.toPageRequest();
         Page<Order> orderPage = orderRepository.findByProductIdAndOrderStatusIn(productId, statuses, pageable);
         Page<OrderResponseDto> responsePage = orderPage.map(orderMapper::fromEntity);
-        return PageResponse.fromPage(responsePage);
+        return CustomPageResponse.fromPage(responsePage);
     }
 
 

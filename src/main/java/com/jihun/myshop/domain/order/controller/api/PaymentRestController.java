@@ -1,19 +1,17 @@
 package com.jihun.myshop.domain.order.controller.api;
 
 import com.jihun.myshop.domain.order.entity.PaymentStatus;
-import com.jihun.myshop.domain.order.entity.dto.OrderDto;
 import com.jihun.myshop.domain.order.entity.dto.PaymentDto.PaymentCancelDto;
 import com.jihun.myshop.domain.order.entity.dto.PaymentDto.PaymentCreateDto;
 import com.jihun.myshop.domain.order.entity.dto.PaymentDto.PaymentResponseDto;
 import com.jihun.myshop.domain.order.service.OrderService;
 import com.jihun.myshop.domain.order.service.PaymentService;
 import com.jihun.myshop.global.common.ApiResponseEntity;
-import com.jihun.myshop.global.common.CustomPageRequest;
-import com.jihun.myshop.global.common.PageResponse;
+import com.jihun.myshop.global.common.dto.CustomPageRequest;
+import com.jihun.myshop.global.common.dto.CustomPageResponse;
 import com.jihun.myshop.global.exception.CustomException;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
-import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import jakarta.annotation.PostConstruct;
@@ -23,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.List;
 
 import static com.jihun.myshop.domain.order.entity.dto.PaymentDto.*;
@@ -148,17 +145,17 @@ public class PaymentRestController {
 
     // 결제 목록 조회(paymentStatus)
     @GetMapping("/status/{statuses}")
-    public ApiResponseEntity<PageResponse<PaymentResponseDto>> getPaymentsByStatus(@PathVariable List<PaymentStatus> statuses,
-                                                                                   CustomPageRequest pageRequest) {
-        PageResponse<PaymentResponseDto> response = paymentService.getPaymentsByStatus(statuses, pageRequest);
+    public ApiResponseEntity<CustomPageResponse<PaymentResponseDto>> getPaymentsByStatus(@PathVariable List<PaymentStatus> statuses,
+                                                                                         CustomPageRequest pageRequest) {
+        CustomPageResponse<PaymentResponseDto> response = paymentService.getPaymentsByStatus(statuses, pageRequest);
         return ApiResponseEntity.success(response);
     }
 
     // 결제 목록 조회(userId)
     @GetMapping("/user/{userId}")
-    public ApiResponseEntity<PageResponse<PaymentResponseDto>> getPaymentsByUserId(@PathVariable Long userId,
-                                                                                   CustomPageRequest pageRequest) {
-        PageResponse<PaymentResponseDto> response = paymentService.getPaymentsByUserId(userId, pageRequest);
+    public ApiResponseEntity<CustomPageResponse<PaymentResponseDto>> getPaymentsByUserId(@PathVariable Long userId,
+                                                                                         CustomPageRequest pageRequest) {
+        CustomPageResponse<PaymentResponseDto> response = paymentService.getPaymentsByUserId(userId, pageRequest);
         return ApiResponseEntity.success(response);
     }
 

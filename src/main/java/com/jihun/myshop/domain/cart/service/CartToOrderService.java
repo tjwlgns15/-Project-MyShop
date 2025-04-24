@@ -8,6 +8,7 @@ import com.jihun.myshop.domain.cart.validator.CartToOrderValidator;
 import com.jihun.myshop.domain.order.entity.Order;
 import com.jihun.myshop.domain.order.entity.OrderItem;
 import com.jihun.myshop.domain.order.entity.mapper.OrderMapper;
+import com.jihun.myshop.domain.order.event.OrderCompletedEvent;
 import com.jihun.myshop.domain.order.repository.OrderRepository;
 import com.jihun.myshop.domain.user.entity.Address;
 import com.jihun.myshop.domain.user.entity.User;
@@ -16,6 +17,7 @@ import com.jihun.myshop.domain.user.repository.UserRepository;
 import com.jihun.myshop.global.exception.CustomException;
 import com.jihun.myshop.global.security.customUserDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,7 @@ public class CartToOrderService {
     private final CartToOrderValidator cartToOrderValidator;
 
     private final CartService cartService;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     private static void applyDiscount(CartOrderDto request, Order order) {
@@ -102,6 +105,10 @@ public class CartToOrderService {
 
         cartService.clearCart(currentUser);
 
+        // 주문 완료 이벤트 발행
+        eventPublisher.publishEvent(new OrderCompletedEvent(savedOrder));
+
+
         return orderMapper.fromEntity(savedOrder);
     }
 
@@ -143,6 +150,9 @@ public class CartToOrderService {
         for (Long cartItemId : request.getCartItemIds()) {
             cartService.removeCartItem(currentUser, cartItemId);
         }
+
+        eventPublisher.publishEvent(new OrderCompletedEvent(savedOrder));
+
 
         return orderMapper.fromEntity(savedOrder);
     }

@@ -1,4 +1,4 @@
-package com.jihun.myshop.global.common;
+package com.jihun.myshop.global.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PageResponse<T> {
+public class CustomPageResponse<T> {
     private List<T> content;
     private int pageNumber;
     private int pageSize;
@@ -21,8 +21,8 @@ public class PageResponse<T> {
     private boolean first;
     private boolean last;
 
-    public static <T> PageResponse<T> fromPage(Page<T> page) {
-        return PageResponse.<T>builder()
+    public static <T> CustomPageResponse<T> fromPage(Page<T> page) {
+        return CustomPageResponse.<T>builder()
                 .content(page.getContent())
                 .pageNumber(page.getNumber())
                 .pageSize(page.getSize())

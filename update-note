@@ -58,3 +58,8 @@
 
 ## wishlistItem
     - wishlistItem CRUD 완료
+
+## recommendation
+    - 추천 알고리즘 구현 (개인화 추천, 관련 상품 추천, 인기 제품 등)
+    - 최근 본 상품 목록 구현
+    - 테스트용 더미 데이터 추가 API 등록
