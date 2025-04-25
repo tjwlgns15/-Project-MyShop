@@ -37,7 +37,7 @@ public class CustomAuthenticationEntryPointHandler implements AuthenticationEntr
             data.put("redirectUrl", "/auth/login");
 
             ApiResponseEntity<Object> apiResponse = ApiResponseEntity.builder()
-                    .code(HttpStatus.UNAUTHORIZED.value())
+                    .status(HttpStatus.UNAUTHORIZED.value())
                     .message("인증이 필요합니다")
                     .data(data)
                     .build();

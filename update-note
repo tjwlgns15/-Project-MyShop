@@ -63,3 +63,8 @@
     - 추천 알고리즘 구현 (개인화 추천, 관련 상품 추천, 인기 제품 등)
     - 최근 본 상품 목록 구현
     - 테스트용 더미 데이터 추가 API 등록
+
+## product image save
+    - ProductImage 추가
+    - File 저장 관련 설정, 서비스 작성
+    - ErrorCode 등 예외관련 코드 수정 (응답 형식, CustomException 외의 일반 오류 처리)

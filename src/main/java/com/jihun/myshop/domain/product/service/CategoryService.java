@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.jihun.myshop.domain.product.entity.dto.CategoryDto.*;
-import static com.jihun.myshop.global.exception.ErrorCode.BED_REQUEST;
+import static com.jihun.myshop.global.exception.ErrorCode.BAD_REQUEST;
 import static com.jihun.myshop.global.exception.ErrorCode.CATEGORY_NOT_EXIST;
 
 @Service
@@ -68,7 +68,7 @@ public class CategoryService {
 
         // 자기 자신을 부모로 설정하는 것을 방지
         if (categoryId.equals(dto.getParentId())) {
-            throw new CustomException(BED_REQUEST);
+            throw new CustomException(BAD_REQUEST);
         }
 
         Category parentCategory = null;
@@ -77,7 +77,7 @@ public class CategoryService {
 
             // 순환 참조 방지 (현재 카테고리의 하위 카테고리를 부모로 설정하는 것을 방지)
             if (isDescendant(parentCategory, category)) {
-                throw new CustomException(BED_REQUEST);
+                throw new CustomException(BAD_REQUEST);
             }
         }
 

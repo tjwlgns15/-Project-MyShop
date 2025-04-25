@@ -1,10 +1,8 @@
 package com.jihun.myshop.global.utils.dummy;
 
-import com.jihun.myshop.domain.product.entity.Category;
-import com.jihun.myshop.domain.product.entity.DiscountType;
-import com.jihun.myshop.domain.product.entity.Product;
-import com.jihun.myshop.domain.product.entity.ProductStatus;
+import com.jihun.myshop.domain.product.entity.*;
 import com.jihun.myshop.domain.product.repository.CategoryRepository;
+import com.jihun.myshop.domain.product.repository.ProductImageRepository;
 import com.jihun.myshop.domain.product.repository.ProductRepository;
 import com.jihun.myshop.domain.user.entity.User;
 import com.jihun.myshop.domain.user.repository.UserRepository;
@@ -22,6 +20,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+import static com.jihun.myshop.domain.product.entity.ProductImage.*;
 import static com.jihun.myshop.global.exception.ErrorCode.USER_NOT_EXIST;
 
 /**
@@ -39,6 +38,7 @@ public class DummyDataGenerator {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final ProductImageRepository productImageRepository;
     private final AuthenticationProvider customAuthenticationProvider;
 
     // 카테고리 및 하위 카테고리 정의
@@ -226,12 +226,6 @@ public class DummyDataGenerator {
                 // 재고 수량 (10~100)
                 int stockQuantity = random.nextInt(91) + 10;
 
-                // 이미지 URL
-                String imageUrl = String.format(
-                        IMAGE_URL_TEMPLATES.get(random.nextInt(IMAGE_URL_TEMPLATES.size())),
-                        random.nextInt(1000)
-                );
-
                 // 상품 생성
                 Product product = Product.builder()
                         .name(productName)
@@ -241,15 +235,52 @@ public class DummyDataGenerator {
                         .discountType(discountType)
                         .discountValue(discountValue)
                         .stockQuantity(stockQuantity)
-                        .mainImageUrl(imageUrl)
                         .category(category)
                         .seller(seller)
                         .productStatus(ProductStatus.ACTIVE)
                         .totalReviews(0)
                         .averageRating(0.0)
+                        .images(new ArrayList<>())
                         .build();
 
-                productRepository.save(product);
+                Product savedProduct = productRepository.save(product);
+
+                // 메인 이미지 생성
+                String mainImageUrl = String.format(
+                        IMAGE_URL_TEMPLATES.get(random.nextInt(IMAGE_URL_TEMPLATES.size())),
+                        random.nextInt(1000)
+                );
+
+                ProductImage mainImage = builder()
+                        .product(savedProduct)
+                        .imageUrl(mainImageUrl)
+                        .sortOrder(0)
+                        .imageType(ProductImageType.MAIN)
+                        .build();
+
+                productImageRepository.save(mainImage);
+
+                // 추가 이미지 1~3개 생성 (50% 확률)
+                if (random.nextBoolean()) {
+                    int additionalImagesCount = random.nextInt(3) + 1;
+
+                    for (int j = 1; j <= additionalImagesCount; j++) {
+                        String additionalImageUrl = String.format(
+                                IMAGE_URL_TEMPLATES.get(random.nextInt(IMAGE_URL_TEMPLATES.size())),
+                                random.nextInt(1000) + 1000 // 메인 이미지와 겹치지 않게 다른 범위 사용
+                        );
+
+                        ProductImage additionalImage = builder()
+                                .product(savedProduct)
+                                .imageUrl(additionalImageUrl)
+                                .sortOrder(j)
+                                .imageType(ProductImageType.ADDITIONAL)
+                                .build();
+
+                        productImageRepository.save(additionalImage);
+                    }
+                }
+
                 createdCount++;
                 totalProductCount++;
 

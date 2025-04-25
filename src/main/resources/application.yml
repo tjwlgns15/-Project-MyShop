@@ -26,6 +26,13 @@ spring:
           lob:
             non_contextual_creation: true
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 15MB
+
+
 logging:
   level:                    # ( TRACE < DEBUG < INFO < WARN < ERROR )
     root: INFO              # 기본 값은 INFO 지정,
@@ -35,6 +42,11 @@ portone:
   imp-id: ${PORTONE_ID}
   imp-key: ${PORTONE_API_KEY}
   imp-secret: ${PORTONE_API_SECRET}
+
+file:
+  upload-path: /home/myshop/uploads
+  upload-dir: /uploads
+
 
 server:
   port: 8081

@@ -1,41 +1,37 @@
 package com.jihun.myshop.domain.product.entity.mapper;
 
-import com.jihun.myshop.domain.product.entity.Category;
 import com.jihun.myshop.domain.product.entity.Product;
-import com.jihun.myshop.domain.product.entity.ProductStatus;
-import com.jihun.myshop.domain.product.entity.dto.ProductDto;
-import com.jihun.myshop.domain.product.entity.dto.ProductDto.ProductResponseDto;
-import com.jihun.myshop.domain.user.entity.User;
-import org.mapstruct.*;
+import com.jihun.myshop.domain.product.entity.ProductImage;
+import com.jihun.myshop.domain.product.entity.dto.ProductWithImageDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.List;
 
-import static com.jihun.myshop.domain.product.entity.dto.ProductDto.ProductCreateDto;
-import static com.jihun.myshop.domain.product.entity.dto.ProductDto.ProductUpdateDto;
+import static com.jihun.myshop.domain.product.entity.dto.ProductWithImageDto.*;
+import static com.jihun.myshop.domain.product.entity.dto.ProductWithImageDto.ProductResponseDto;
 
-@Mapper(componentModel = "spring", imports = {ArrayList.class, ProductStatus.class})
+@Mapper(componentModel = "spring")
 public interface ProductMapper {
 
-    @Mapping(target = "categoryName", source = "category.name")
-    @Mapping(target = "categoryId", source = "category.id")
-    @Mapping(target = "sellerName", source = "seller.name")
-    @Mapping(target = "sellerId", source = "seller.id")
-    ProductResponseDto fromEntity(Product entity);
+    @Mapping(target = "categoryName", source = "product.category.name")
+    @Mapping(target = "categoryId", source = "product.category.id")
+    @Mapping(target = "sellerName", source = "product.seller.name")
+    @Mapping(target = "sellerId", source = "product.seller.id")
+    @Mapping(target = "mainImage", expression = "java(mapMainImage(product))")
+    @Mapping(target = "additionalImages", expression = "java(mapAdditionalImages(product))")
+    ProductResponseDto fromEntity(Product product);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "category", source = "category")
-    @Mapping(target = "seller", source = "user")
-    @Mapping(target = "name", source = "productCreateDto.name")
-    @Mapping(target = "description", source = "productCreateDto.description")
-    @Mapping(target = "price", source = "productCreateDto.price")
-    @Mapping(target = "reviews", expression = "java(new ArrayList<>())")
-    @Mapping(target = "productStatus", expression = "java(ProductStatus.ACTIVE)")
-    @Mapping(target = "discountType", source = "productCreateDto.discountType")
-    @Mapping(target = "discountValue", source = "productCreateDto.discountValue")
-    @Mapping(target = "discountPrice", source = "discountPrice")
-    Product fromCreateDto(ProductCreateDto productCreateDto, Category category, User user, BigDecimal discountPrice);
+    @Mapping(target = "productId", source = "product.id")
+    ProductImageResponseDto toResponseDto(ProductImage image);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntity(ProductUpdateDto productUpdateDto, @MappingTarget Product entity);
+    default ProductImageResponseDto mapMainImage(Product product) {
+        return product.getMainImage() != null ? toResponseDto(product.getMainImage()) : null;
+    }
+
+    default List<ProductImageResponseDto> mapAdditionalImages(Product product) {
+        return product.getAdditionalImages().stream()
+                .map(this::toResponseDto)
+                .toList();
+    }
 }

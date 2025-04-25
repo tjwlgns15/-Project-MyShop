@@ -23,6 +23,7 @@ public class AuthorizationService {
     public boolean isAdmin(CustomUserDetails userDetails) {
         return hasRole(userDetails, "ROLE_ADMIN");
     }
+
     public void validateAdmin(CustomUserDetails userDetails) {
         if (!isAdmin(userDetails)) {
             throw new CustomException(UNAUTHORIZED_ACCESS);

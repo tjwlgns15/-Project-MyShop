@@ -1,5 +1,6 @@
 package com.jihun.myshop.domain.product.entity;
 
+import com.jihun.myshop.domain.product.entity.dto.ProductWithImageDto.ProductCreateWithImagesDto;
 import com.jihun.myshop.domain.user.entity.User;
 import com.jihun.myshop.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -27,21 +28,11 @@ public class Product extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
+    private List<ProductImage> images = new ArrayList<>();
+
     private String description;
-
-    private BigDecimal price;
-
-    private BigDecimal discountPrice;
-
-    @Enumerated(EnumType.STRING)
-    private DiscountType discountType;
-
-    private BigDecimal discountValue;
-
-    private int stockQuantity;
-
-    @Column(length = 1000)
-    private String mainImageUrl;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -50,6 +41,15 @@ public class Product extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private User seller;
+
+    private int stockQuantity;
+
+    private BigDecimal price;
+
+    @Enumerated(EnumType.STRING)
+    private DiscountType discountType;
+    private BigDecimal discountValue;
+    private BigDecimal discountPrice;
 
     @OneToMany(mappedBy = "product")
     private List<Review> reviews = new ArrayList<>();
@@ -65,6 +65,21 @@ public class Product extends BaseTimeEntity {
 //    @OneToMany(mappedBy = "product")
 //    private List<OrderItem> orderItems = new ArrayList<>();
 
+    public static Product createProduct(ProductCreateWithImagesDto dto, Category category, User seller, BigDecimal discountPrice) {
+        return Product.builder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .price(dto.getPrice())
+                .discountType(dto.getDiscountType())
+                .discountValue(dto.getDiscountValue())
+                .discountPrice(discountPrice)
+                .stockQuantity(dto.getStockQuantity())
+                .category(category)
+                .seller(seller)
+                .productStatus(ProductStatus.ACTIVE)
+                .images(new ArrayList<>())
+                .build();
+    }
 
     public void updateBasicInfo(String name, String description, BigDecimal price) {
         this.name = name;
@@ -82,9 +97,38 @@ public class Product extends BaseTimeEntity {
     public void updateStockQuantity(int stockQuantity) {
         this.stockQuantity = stockQuantity;
     }
-    public void updateMainImage(String mainImageUrl) {
-        this.mainImageUrl = mainImageUrl;
+
+    // 이미지 관련 메서드
+    public void addImage(ProductImage image) {
+        this.images.add(image);
     }
+
+    public void removeImage(ProductImage image) {
+        this.images.remove(image);
+    }
+
+    // 메인 이미지 조회 메서드
+    public ProductImage getMainImage() {
+        return this.images.stream()
+                .filter(ProductImage::isMainImage)
+                .findFirst()
+                .orElse(null);
+    }
+
+    // 메인 이미지 URL 조회 메서드 (기존 코드와의 호환성을 위해)
+    public String getMainImageUrl() {
+        ProductImage mainImage = getMainImage();
+        return mainImage != null ? mainImage.getImageUrl() : null;
+    }
+
+    // 추가 이미지 목록 조회
+    public List<ProductImage> getAdditionalImages() {
+        return this.images.stream()
+                .filter(image -> !image.isMainImage())
+                .sorted((i1, i2) -> Integer.compare(i1.getSortOrder(), i2.getSortOrder()))
+                .toList();
+    }
+
     public void updateStatus(ProductStatus productStatus) {
         this.productStatus = productStatus;
     }
